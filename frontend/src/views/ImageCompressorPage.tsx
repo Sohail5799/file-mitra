@@ -31,6 +31,7 @@ export function ImageCompressorPage() {
         <Section
           title="Image Compressor"
           description="Compress images online with quality control."
+          titleLevel={1}
         >
           <div className="grid gap-4 md:grid-cols-2">
             <Card title="Upload image">

@@ -59,7 +59,7 @@ export function PdfConvertPage() {
         <Section
           title="PDF → Excel/Doc"
           description="Convert PDFs into editable formats for everyday work."
-          // right={<ComingSoonBadge />}
+          titleLevel={1}
         >
           <div className="mb-4 grid gap-3 md:grid-cols-3">
             <div className="surface-muted p-4">

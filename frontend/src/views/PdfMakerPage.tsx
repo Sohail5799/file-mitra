@@ -95,6 +95,7 @@ export function PdfMakerPage() {
         <Section
           title="JPG to PDF"
           description="Upload images, set page options, and download one PDF."
+          titleLevel={1}
         >
           <div className="space-y-4">
             <div

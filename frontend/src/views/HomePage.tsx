@@ -84,22 +84,18 @@ export function HomePage() {
 
   return (
     <div className="space-y-6">
-      <Section
-        title="One-click premium file workflows"
-        description="Transform, compress, merge and OCR files in a clean modern experience."
-        className="premium-hero"
-      >
+      <Section className="premium-hero">
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            {/* <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs text-slate-300">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              Modern tools now live
-            </div> */}
-            <div className="text-2xl font-semibold tracking-tight text-white sm:text-3xl md:text-4xl">
+            <p className="text-sm font-medium tracking-wide text-slate-400">
+              One-click premium file workflows
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl md:text-4xl">
               Premium converter suite for daily work
-            </div>
+            </h1>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-300 md:text-base">
-              Fast performance, elegant UI, and practical tools that keep expanding as your workflow grows.
+              Transform, compress, merge and OCR files in a clean modern experience. Fast performance,
+              elegant UI, and practical tools that keep expanding as your workflow grows.
             </p>
             <div className="mt-3 flex flex-col gap-2 min-[400px]:flex-row min-[400px]:flex-wrap min-[400px]:items-center">
               <Link to="/pdf-tools" className="btn-primary w-full justify-center min-[400px]:w-auto">

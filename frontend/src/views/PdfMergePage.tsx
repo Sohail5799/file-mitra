@@ -24,7 +24,11 @@ export function PdfMergePage() {
   });
 
   return (
-    <Section title="Merge PDF" description="Combine multiple PDFs into one file in selected order.">
+    <Section
+      title="Merge PDF"
+      description="Combine multiple PDFs into one file in selected order."
+      titleLevel={1}
+    >
       <div className="grid gap-4 md:grid-cols-2">
         <Card title="Select PDFs">
           <input

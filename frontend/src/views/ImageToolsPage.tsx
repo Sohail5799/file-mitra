@@ -39,7 +39,11 @@ export function ImageToolsPage() {
   });
 
   return (
-    <Section title="Image Tools" description="Convert and compress images in one simple place.">
+    <Section
+      title="Image Tools"
+      description="Convert and compress images in one simple place."
+      titleLevel={1}
+    >
       <div className="grid gap-4 md:grid-cols-2">
         <Card title="Image Convert">
           <input

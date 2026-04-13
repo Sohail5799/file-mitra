@@ -53,7 +53,11 @@ export function OcrPage() {
 
   return (
     <>
-      <Section title="OCR Extractor" description="Extract text from image/PDF using OCR backend.">
+      <Section
+        title="OCR Extractor"
+        description="Extract text from image/PDF using OCR backend."
+        titleLevel={1}
+      >
         <div className="grid gap-4 md:grid-cols-2">
           <Card title="Upload source">
             <input

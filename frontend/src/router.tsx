@@ -4,9 +4,11 @@ import {
   RootRoute,
   Route,
   Router,
-  RouterProvider
+  RouterProvider,
+  useRouterState
 } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { applyRouteSeo } from "./lib/routeSeo";
 import { HomePage } from "./views/HomePage";
 import { ImageToJpegPage } from "./views/ImageToJpegPage";
 import { PdfMakerPage } from "./views/PdfMakerPage";
@@ -36,6 +38,14 @@ function NavLink(props: { to: string; label: string }) {
   );
 }
 
+function RouteMetaSync() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useLayoutEffect(() => {
+    applyRouteSeo(pathname);
+  }, [pathname]);
+  return null;
+}
+
 function RootLayout() {
   const [toolsOpen, setToolsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -59,6 +69,7 @@ function RootLayout() {
 
   return (
     <div className="min-h-screen min-w-0">
+      <RouteMetaSync />
       <div className="mx-auto max-w-6xl px-3 py-4 sm:px-4 sm:py-8">
         <header className="sticky top-2 z-30 sm:top-4">
           <div className="app-shell premium-nav-wrap flex min-w-0 flex-col gap-3 rounded-2xl p-3 sm:gap-4 sm:rounded-3xl sm:p-4 md:flex-row md:items-center md:justify-between md:px-5">

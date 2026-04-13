@@ -27,7 +27,11 @@ export function PdfCompressorPage() {
   });
 
   return (
-    <Section title="PDF Compressor" description="Compress PDF using PyMuPDF/Ghostscript powered backend.">
+    <Section
+      title="PDF Compressor"
+      description="Compress PDF using PyMuPDF/Ghostscript powered backend."
+      titleLevel={1}
+    >
       <div className="grid gap-4 md:grid-cols-2">
         <Card title="Upload PDF">
           <input

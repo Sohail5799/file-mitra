@@ -6,6 +6,7 @@ export function AboutPage() {
     <Section
       title="About Us"
       description="Welcome to File Mitra - your all-in-one free file toolkit designed to make everyday file tasks simple, fast, and hassle-free."
+      titleLevel={1}
     >
       <div className="space-y-4">
         <Card title="Our Mission">

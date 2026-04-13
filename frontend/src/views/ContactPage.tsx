@@ -32,7 +32,11 @@ export function ContactPage() {
   }
 
   return (
-    <Section title="Contact Us" description="Send your feedback or issue and we will respond quickly.">
+    <Section
+      title="Contact Us"
+      description="Send your feedback or issue and we will respond quickly."
+      titleLevel={1}
+    >
       <div className="grid gap-4 md:grid-cols-2">
         <Card title="Get in touch">
           <form onSubmit={onSubmit} className="space-y-3">

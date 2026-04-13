@@ -9,6 +9,7 @@ export function ImageToJpegPage() {
         <Section
           title="Image Converter"
           description="Upload an image, choose output format, and download."
+          titleLevel={1}
         >
           <ImageJpegConverter />
         </Section>

@@ -57,7 +57,11 @@ export function PdfToolsPage() {
   });
 
   return (
-    <Section title="PDF Tools" description="Convert, compress, and merge PDFs in one place.">
+    <Section
+      title="PDF Tools"
+      description="Convert, compress, and merge PDFs in one place."
+      titleLevel={1}
+    >
       <div className="grid gap-4 lg:grid-cols-3">
         <Card title="PDF Convert">
           <input
