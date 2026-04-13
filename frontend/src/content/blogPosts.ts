@@ -17,6 +17,101 @@ export type BlogPost = {
 
 const posts: BlogPost[] = [
   {
+    slug: "ats-friendly-resume-bullets-recruiters-actually-read",
+    title: "ATS-friendly resume bullets recruiters actually read",
+    excerpt:
+      "How to write impact lines that parse cleanly in applicant systems and still sound human in a six-second skim.",
+    date: "2026-04-14",
+    readMin: 11,
+    keywords:
+      "ATS resume tips, resume bullet points, STAR method resume, keyword stuffing avoid, resume scanner",
+    sections: [
+      {
+        type: "p",
+        text: "Most rejection happens before a human reads your nuance. Applicant tracking systems (ATS) split your file into text blocks, and recruiters skim the top third for role fit. Bullets that are vague (“responsible for…”) or buried in tables and text boxes may never surface the way you expect."
+      },
+      {
+        type: "h2",
+        text: "Lead with outcome, then mechanism"
+      },
+      {
+        type: "p",
+        text: "Strong bullets answer: what changed, for whom, and how you did it—with a number when honest. “Cut invoice processing time by 22% by automating validation in Python” beats “Worked on invoices.” If you cannot quantify, use scope: “Led discovery for 12 stakeholders across legal and finance.”"
+      },
+      {
+        type: "h2",
+        text: "Keywords without stuffing"
+      },
+      {
+        type: "p",
+        text: "Mirror the job description’s language for tools and domains you truly used—Kubernetes, GA4, SOC 2—but avoid repeating the same phrase ten times. Natural prose with synonyms usually parses better and reads better to humans."
+      },
+      {
+        type: "h3",
+        text: "Formatting that survives export"
+      },
+      {
+        type: "ul",
+        items: [
+          "Prefer a single-column layout for the main story—multi-column Word docs can scramble order in some parsers.",
+          "Use standard section titles: Experience, Education, Skills.",
+          "Save final copies as PDF from a clean print layout; check that text is selectable."
+        ]
+      },
+      {
+        type: "callout",
+        text: "Before you submit, paste your resume into a plain text editor once. If it reads in logical order there, you have a better shot with both ATS and tired hiring managers."
+      }
+    ]
+  },
+  {
+    slug: "one-page-vs-two-page-resume-when-length-matters",
+    title: "One-page vs two-page resume: when length actually matters",
+    excerpt:
+      "Students and career switchers are told “one page only.” Here is a more honest framework for India and global applications.",
+    date: "2026-04-13",
+    readMin: 9,
+    keywords: "one page resume, two page CV, resume length India, experienced hire resume, academic CV",
+    sections: [
+      {
+        type: "p",
+        text: "Length rules are really about signal density. Early-career candidates rarely need two pages—every line should earn its place. Mid-career specialists with multiple shipped products, patents, or publications often need the second page; forcing one page can hide the exact proof a hiring manager searched for."
+      },
+      {
+        type: "h2",
+        text: "When one page is enough"
+      },
+      {
+        type: "ul",
+        items: [
+          "Under ~5 years of relevant experience with a tight story.",
+          "Switching roles within the same discipline and repeating similar bullets.",
+          "Applying through high-volume portals where brevity helps skimming."
+        ]
+      },
+      {
+        type: "h2",
+        text: "When two pages are defensible"
+      },
+      {
+        type: "p",
+        text: "Use page two for depth that repeats on every application: selected projects, open-source, speaking, or stacked certifications with dates. Put the strongest two roles on page one with your best metrics; page two should feel like supporting evidence, not filler."
+      },
+      {
+        type: "h2",
+        text: "Regional expectations"
+      },
+      {
+        type: "p",
+        text: "Some Indian campus hiring formats expect a strict one-pager; many product and SaaS teams hiring senior ICs are used to two pages if every line is specific. Tailor to the funnel: campus PDF vs LinkedIn export vs email to a founder."
+      },
+      {
+        type: "callout",
+        text: "If you add a second page, re-read page one in isolation: would a stranger still know what you want next? If not, fix page one before polishing page two."
+      }
+    ]
+  },
+  {
     slug: "jpeg-vs-png-vs-webp-choosing-image-format",
     title: "JPEG vs PNG vs WebP: choosing the right image format",
     excerpt:

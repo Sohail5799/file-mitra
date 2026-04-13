@@ -7,6 +7,7 @@ import {
   RouterProvider,
   useRouterState
 } from "@tanstack/react-router";
+import clsx from "clsx";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { applyRouteSeo } from "./lib/routeSeo";
 import { HomePage } from "./views/HomePage";
@@ -24,6 +25,7 @@ import { ImageToolsPage } from "./views/ImageToolsPage";
 import { PdfToolsPage } from "./views/PdfToolsPage";
 import { BlogIndexPage } from "./views/BlogIndexPage";
 import { BlogPostPage } from "./views/BlogPostPage";
+import { ResumeBuilderPage } from "./views/resume/ResumeBuilderPage";
 
 function NavLink(props: { to: string; label: string }) {
   return (
@@ -36,6 +38,28 @@ function NavLink(props: { to: string; label: string }) {
       }}
     >
       {props.label}
+    </Link>
+  );
+}
+
+/** Stand-out CTA in the nav — soft pulse + shimmer so new visitors notice Resume. */
+function ResumeNavLink() {
+  return (
+    <Link
+      to="/resume"
+      className={clsx(
+        "resume-nav-cta group relative shrink-0 overflow-hidden rounded-full px-2.5 py-1.5 text-xs sm:px-3 sm:py-2 sm:text-sm"
+      )}
+      activeProps={{
+        className: clsx(
+          "resume-nav-cta-active shrink-0 rounded-full px-2.5 py-1.5 text-xs sm:px-3 sm:py-2 sm:text-sm"
+        )
+      }}
+    >
+      <span className="resume-nav-cta__shine pointer-events-none absolute inset-0 opacity-40" aria-hidden />
+      <span className="relative z-[1] font-semibold tracking-wide text-indigo-50 drop-shadow-sm group-hover:text-white">
+        Resume
+      </span>
     </Link>
   );
 }
@@ -97,6 +121,7 @@ function RootLayout() {
             <nav className="premium-nav-pill relative flex w-full min-w-0 flex-wrap items-center justify-center gap-1.5 rounded-2xl p-1 sm:gap-2 sm:rounded-full sm:p-1.5 md:w-auto md:justify-end">
               <NavLink to="/" label="Home" />
               <NavLink to="/blog" label="Blog" />
+              <ResumeNavLink />
 
               {/* Mobile: static → dropdown anchors to full nav width. md+: relative → under Tools. */}
               <div ref={dropdownRef} className="max-md:static md:relative md:shrink-0">
@@ -144,6 +169,13 @@ function RootLayout() {
                     >
                       Blog & guides
                     </Link>
+                    <Link
+                      to="/resume"
+                      onClick={() => setToolsOpen(false)}
+                      className="break-words rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                    >
+                      Resume Studio
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -162,6 +194,7 @@ function RootLayout() {
           <div className="flex flex-col gap-3 text-xs text-slate-400 md:flex-row md:items-center md:justify-between">
             <div>Fast, private, and simple.</div>
             <div className="flex flex-wrap items-center gap-3">
+              <Link to="/resume" className="hover:text-white">Resume</Link>
               <Link to="/blog" className="hover:text-white">Blog</Link>
               <Link to="/about" className="hover:text-white">About</Link>
               <Link to="/contact" className="hover:text-white">Contact</Link>
@@ -268,6 +301,12 @@ const blogPostRoute = new Route({
   component: BlogPostPage
 });
 
+const resumeRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/resume",
+  component: ResumeBuilderPage
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   imageToolsRoute,
@@ -283,7 +322,8 @@ const routeTree = rootRoute.addChildren([
   contactRoute,
   privacyPolicyRoute,
   blogIndexRoute,
-  blogPostRoute
+  blogPostRoute,
+  resumeRoute
 ]);
 
 const router = new Router({ routeTree });

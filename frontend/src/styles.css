@@ -249,3 +249,124 @@ main::before {
   }
 }
 
+/* Resume nav CTA — draws the eye on first load */
+@keyframes resume-nav-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(129, 140, 248, 0.55),
+      0 0 20px rgba(34, 211, 238, 0.15);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow:
+      0 0 0 5px rgba(129, 140, 248, 0.12),
+      0 0 28px rgba(192, 132, 252, 0.22);
+    transform: scale(1.03);
+  }
+}
+
+@keyframes resume-nav-shine {
+  0% {
+    transform: translateX(-120%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(220%) skewX(-12deg);
+  }
+}
+
+.resume-nav-cta {
+  border: 1px solid rgba(165, 180, 252, 0.55);
+  background:
+    linear-gradient(135deg, rgba(79, 70, 229, 0.45), rgba(124, 58, 237, 0.35), rgba(6, 182, 212, 0.3));
+  animation: resume-nav-pulse 2.8s ease-in-out infinite;
+}
+
+.resume-nav-cta:hover {
+  animation-play-state: paused;
+  border-color: rgba(196, 181, 253, 0.85);
+  box-shadow: 0 0 24px rgba(129, 140, 248, 0.35);
+}
+
+.resume-nav-cta__shine {
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 45%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0.35) 55%,
+    transparent 100%
+  );
+  animation: resume-nav-shine 4.5s ease-in-out infinite;
+}
+
+.resume-nav-cta-active {
+  animation: none;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 8px 28px rgba(255, 255, 255, 0.12);
+}
+
+.resume-nav-cta-active .resume-nav-cta__shine {
+  display: none;
+}
+
+.resume-nav-cta-active span.relative {
+  color: rgb(15 23 42) !important;
+  font-weight: 700;
+}
+
+/* Live resume preview — animated gradient frame */
+@keyframes resume-preview-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.resume-preview-frame {
+  border-radius: 1.25rem;
+  padding: 2px;
+  background: linear-gradient(
+    125deg,
+    #818cf8,
+    #c084fc,
+    #22d3ee,
+    #a78bfa,
+    #818cf8
+  );
+  background-size: 320% 320%;
+  animation: resume-preview-gradient 10s ease infinite;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 20px 50px rgba(99, 102, 241, 0.18),
+    0 0 40px rgba(34, 211, 238, 0.08);
+}
+
+.resume-preview-inner {
+  border-radius: calc(1.25rem - 2px);
+  background: rgba(2, 6, 18, 0.94);
+  backdrop-filter: blur(12px);
+}
+
+/* Resume live preview: smooth scrolling + readable text */
+.resume-preview-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
+}
+
+@media print {
+  .resume-preview-scroll {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .resume-print-export-root {
+    overflow: visible !important;
+  }
+}
+

@@ -11,9 +11,9 @@ const ROUTES: Record<string, RouteSeo> = {
   "/": {
     title: `${SITE_NAME} — Free online image & PDF tools (convert, compress, merge, OCR)`,
     description:
-      "Convert images to JPEG/PNG/WebP, compress photos and PDFs, merge PDFs, turn PDFs into Word or Excel, and extract text with OCR — fast, private, browser-based workflows.",
+      "Convert images to JPEG/PNG/WebP, compress photos and PDFs, merge PDFs, turn PDFs into Word or Excel, extract text with OCR, and build an ATS-friendly resume with live preview — fast, private, browser-based workflows.",
     keywords:
-      "File Mitra, free PDF tools, image to JPEG online, compress PDF, merge PDF, PDF to Word, PDF to Excel, OCR online, image compressor, convert PNG to JPG"
+      "File Mitra, free PDF tools, free resume builder online, image to JPEG, compress PDF, merge PDF, PDF to Word, OCR online, ATS resume"
   },
   "/image-tools": {
     title: `Image tools — convert & compress online | ${SITE_NAME}`,
@@ -93,6 +93,13 @@ const ROUTES: Record<string, RouteSeo> = {
       "Practical articles on JPEG vs PNG vs WebP, PDF compression, table extraction to Excel, OCR for scans, merging PDFs, and FAQs about using File Mitra safely.",
     keywords:
       "File Mitra blog, PDF tips, image compression guide, OCR guide, merge PDF tutorial, PDF to Excel help, file converter FAQ"
+  },
+  "/resume": {
+    title: `Free resume builder — ATS-friendly CV & print PDF | ${SITE_NAME}`,
+    description:
+      "Build a structured resume with profile, summary, experience bullets, education, skills, and projects. Live A4 preview, JSON import/export, and print-to-PDF — runs entirely in your browser.",
+    keywords:
+      "free resume builder online, ATS friendly resume, CV maker India, print resume PDF, JSON resume, resume template browser"
   }
 };
 

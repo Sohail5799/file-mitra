@@ -22,6 +22,24 @@ export function HomePage() {
 
   const reviews = [
     {
+      logo: "CV",
+      company: "Lumen Careers",
+      quote:
+        "We point candidates to File Mitra’s resume studio — polished layout, easy edits, and PDF export without another subscription tool."
+    },
+    {
+      logo: "HR",
+      company: "Harbor HR",
+      quote:
+        "Finally a free resume builder where the preview matches the PDF. Our campus cohorts use it before mock interviews — fewer formatting disasters."
+    },
+    {
+      logo: "RS",
+      company: "RiseStack Talent",
+      quote:
+        "We recommend File Mitra for quick CV refreshes: bullet-friendly sections, ATS-style flow, and a clear print path for candidates in a hurry."
+    },
+    {
       logo: "NX",
       company: "Nexa Studio",
       quote: "Super clean UI and really fast conversion. Team uses this daily."
@@ -57,6 +75,11 @@ export function HomePage() {
       title: "OCR Extractor",
       desc: "Extract text from images and PDFs.",
       to: "/ocr"
+    },
+    {
+      title: "Resume Studio",
+      desc: "ATS-style CV with live preview and print-to-PDF — no extra signup.",
+      to: "/resume"
     }
   ];
   const [activeReview, setActiveReview] = useState(0);
@@ -103,6 +126,9 @@ export function HomePage() {
               </Link>
               <Link to="/image-tools" className="btn-secondary w-full justify-center min-[400px]:w-auto">
                 Open Image Tools
+              </Link>
+              <Link to="/resume" className="btn-secondary w-full justify-center min-[400px]:w-auto">
+                Resume Studio
               </Link>
             </div>
             {/* <div className="mt-4 text-xs text-slate-400">
@@ -152,6 +178,40 @@ export function HomePage() {
           <div>Notion</div>
         </div>
       </section> */}
+
+      <Section
+        title="Resume Studio"
+        description="Structured sections, impact bullets, and a print-ready A4 canvas — built for real job searches, not toy templates."
+      >
+        <div className="grid gap-4 lg:grid-cols-2 lg:items-center">
+          <div className="space-y-3">
+            <ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-300">
+              <li>Live preview that tracks every edit — no mode switching.</li>
+              <li>Experience blocks with reorderable bullets tuned for hiring managers.</li>
+              <li>Scrollable live preview so long CVs stay readable before you print.</li>
+              <li>Print-to-PDF using your browser — no server upload of your CV.</li>
+            </ul>
+            <Link to="/resume" className="btn-primary inline-flex">
+              Open Resume Studio
+            </Link>
+          </div>
+          <div className="surface-muted relative overflow-hidden rounded-2xl p-5">
+            <div className="pointer-events-none absolute -right-6 -top-10 h-32 w-32 rounded-full bg-indigo-500/20 blur-2xl" />
+            <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Preview snapshot</div>
+            <div className="mt-3 space-y-2 rounded-lg border border-white/10 bg-white p-4 text-[11px] leading-snug text-slate-800 shadow-lg">
+              <div className="text-[13px] font-bold text-slate-900">Aanya Sharma</div>
+              <div className="text-[10px] text-slate-600">Product Designer · Design Systems</div>
+              <div className="h-px bg-slate-200" />
+              <div className="text-[9px] font-bold uppercase tracking-wide text-slate-500">Summary</div>
+              <p className="text-[9px] text-slate-700">
+                Designer focused on clarity, accessibility, and measurable outcomes…
+              </p>
+              <div className="text-[9px] font-bold uppercase tracking-wide text-slate-500">Experience</div>
+              <p className="text-[9px] text-slate-700">Northwind Labs — Senior Product Designer · 2023–Present</p>
+            </div>
+          </div>
+        </div>
+      </Section>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card title="Trusted" description="Used by millions of users worldwide.">
@@ -258,6 +318,9 @@ export function HomePage() {
           <div>
             <div className="text-sm font-medium text-white">Tools</div>
             <div className="mt-2 space-y-1 text-sm text-slate-300">
+              <Link to="/resume" className="block hover:text-white">
+                Resume Studio
+              </Link>
               <div>Image Converter</div>
               <div>Image Compressor</div>
               <div>PDF Maker</div>

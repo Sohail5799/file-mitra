@@ -7,7 +7,7 @@ export function Section(props: {
   /** Use `1` for the main page heading (SEO). Default `2`. */
   titleLevel?: 1 | 2;
   right?: ReactNode;
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
 }) {
   const level = props.titleLevel ?? 2;
@@ -47,7 +47,9 @@ export function Section(props: {
         </header>
       ) : null}
 
-      <div className={showHeader ? "mt-5" : ""}>{props.children}</div>
+      {props.children != null && props.children !== false ? (
+        <div className={showHeader ? "mt-5" : ""}>{props.children}</div>
+      ) : null}
     </section>
   );
 }
