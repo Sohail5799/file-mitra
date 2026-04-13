@@ -1,10 +1,6 @@
 # Dependencies
 node_modules/
 
-# Vite / frontend build
-dist/
-dist-ssr/
-
 # TypeScript
 *.tsbuildinfo
 
