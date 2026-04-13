@@ -183,7 +183,9 @@ def make_pdf(
 @app.post("/api/pdf/merge")
 def merge_pdf(files: list[UploadFile] = File(...)):
     if len(files) < 2:
-        raise HTTPException(status_code=400, detail="At least 2 PDF files are required.")
+        raise HTTPException(
+            status_code=400, detail="At least 2 PDF files are required."
+        )
 
     writer = PdfWriter()
     for file in files:
@@ -203,7 +205,10 @@ def merge_pdf(files: list[UploadFile] = File(...)):
 
 
 @app.post("/api/compress/pdf")
-def compress_pdf(file: UploadFile = File(...), level: Literal["low", "medium", "high"] = Form("medium")):
+def compress_pdf(
+    file: UploadFile = File(...),
+    level: Literal["low", "medium", "high"] = Form("medium"),
+):
     raw = file.file.read()
     if not raw:
         raise HTTPException(status_code=400, detail="Empty PDF file.")
@@ -255,7 +260,11 @@ def convert_pdf(
             word.add_paragraph(content.strip() or "(No extractable text)")
         out = io.BytesIO()
         word.save(out)
-        return _stream_bytes(out.getvalue(), "converted.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        return _stream_bytes(
+            out.getvalue(),
+            "converted.docx",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
 
     workbook = Workbook()
     sheet = workbook.active
@@ -271,7 +280,11 @@ def convert_pdf(
     _ = mode
     out = io.BytesIO()
     workbook.save(out)
-    return _stream_bytes(out.getvalue(), "converted.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    return _stream_bytes(
+        out.getvalue(),
+        "converted.xlsx",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
 
 
 @app.post("/api/ocr/extract")
@@ -290,11 +303,15 @@ def ocr_extract(
         try:
             extracted = _extract_text_from_docx(raw)
         except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=400, detail="Invalid Word (.docx) file.") from exc
+            raise HTTPException(
+                status_code=400, detail="Invalid Word (.docx) file."
+            ) from exc
         if not extracted:
             extracted = "No text found in document."
         if output == "txt":
-            return _stream_bytes(extracted.encode("utf-8"), "ocr-output.txt", "text/plain")
+            return _stream_bytes(
+                extracted.encode("utf-8"), "ocr-output.txt", "text/plain"
+            )
         if output == "docx":
             doc = Document()
             doc.add_heading("Extracted Text", level=1)
@@ -342,9 +359,7 @@ def ocr_extract(
             if len(embedded) >= _MIN_EMBEDDED_PDF_TEXT:
                 text_result = embedded
                 if page_count > embed_n:
-                    pdf_truncation_note = (
-                        f"\n\n[Note: Text from first {embed_n} of {page_count} pages only.]\n"
-                    )
+                    pdf_truncation_note = f"\n\n[Note: Text from first {embed_n} of {page_count} pages only.]\n"
             else:
                 for i in range(min(page_count, max_ocr_pages)):
                     page = pdf.load_page(i)
@@ -353,9 +368,7 @@ def ocr_extract(
                     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
                     images_for_ocr.append(_resize_for_ocr(img))
                 if page_count > max_ocr_pages:
-                    pdf_truncation_note = (
-                        f"\n\n[Note: Only first {max_ocr_pages} of {page_count} pages were OCR'd for speed.]\n"
-                    )
+                    pdf_truncation_note = f"\n\n[Note: Only first {max_ocr_pages} of {page_count} pages were OCR'd for speed.]\n"
         finally:
             pdf.close()
     else:
@@ -375,9 +388,13 @@ def ocr_extract(
         except HTTPException:
             raise
         except Exception as exc:  # pragma: no cover
-            raise HTTPException(status_code=500, detail=f"OCR failed on page/slice {idx + 1}: {exc!s}") from exc
+            raise HTTPException(
+                status_code=500, detail=f"OCR failed on page/slice {idx + 1}: {exc!s}"
+            ) from exc
 
-    cleaned = (text_result.strip() + pdf_truncation_note).strip() or "No OCR text extracted."
+    cleaned = (
+        text_result.strip() + pdf_truncation_note
+    ).strip() or "No OCR text extracted."
 
     if output == "txt":
         return _stream_bytes(cleaned.encode("utf-8"), "ocr-output.txt", "text/plain")
@@ -388,7 +405,11 @@ def ocr_extract(
         doc.add_paragraph(cleaned)
         out = io.BytesIO()
         doc.save(out)
-        return _stream_bytes(out.getvalue(), "ocr-output.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+        return _stream_bytes(
+            out.getvalue(),
+            "ocr-output.docx",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
 
     pdf_doc = fitz.open()
     page = pdf_doc.new_page()
@@ -400,11 +421,13 @@ def ocr_extract(
     return _stream_bytes(out.getvalue(), "ocr-output.pdf", "application/pdf")
 
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DIST_PATH = os.path.join(BASE_DIR, "dist")
+DIST_PATH = os.path.join(BASE_DIR, "frontend", "dist")
 
-app.mount("/assets", StaticFiles(directory=os.path.join(DIST_PATH, "assets")), name="assets")
+app.mount(
+    "/assets", StaticFiles(directory=os.path.join(DIST_PATH, "assets")), name="assets"
+)
+
 
 @app.get("/")
 def serve_react():
