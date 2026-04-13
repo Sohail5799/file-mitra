@@ -1,6 +1,7 @@
 import clsx from "clsx";
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
-import { useReactToPrint } from "react-to-print";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { useCallback, useRef, useState, type CSSProperties } from "react";
 import { Section } from "../../ui/Section";
 import { ResumeCanvas } from "./ResumeCanvas";
 import { ResumeForm } from "./ResumeForm";
@@ -14,28 +15,7 @@ const FIT_TARGET_PX = A4_HEIGHT_PX * 0.92;
 const SCALE_MIN = 0.5;
 const SCALE_MAX = 1;
 
-/**
- * Print iframe styles — keep react-to-print defaults (headers off, color accuracy) + A4 + no clipping.
- */
-const RESUME_PRINT_PAGE_STYLE = `
-  @page {
-    margin: 0;
-    size: A4 portrait;
-  }
-  @media print {
-    body {
-      color-adjust: exact;
-      print-color-adjust: exact;
-      -webkit-print-color-adjust: exact;
-    }
-    html, body {
-      height: auto !important;
-      overflow: visible !important;
-    }
-  }
-`;
-
-/** Live preview mirror (desktop + mobile sheet) — not used for react-to-print. */
+/** Live preview mirror (desktop only). */
 function ResumePreviewMirror({
   model,
   printScale,
@@ -65,25 +45,11 @@ function ResumePreviewMirror({
 }
 
 export function ResumeBuilderPage() {
-  const printRef = useRef<HTMLDivElement>(null);
+  const exportRef = useRef<HTMLDivElement>(null);
   const scaleInnerRef = useRef<HTMLDivElement>(null);
   const [printScale, setPrintScale] = useState(SCALE_MAX);
-  const [mobilePrintOpen, setMobilePrintOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const { model, dispatch } = useResumeEditor();
-
-  useEffect(() => {
-    if (!mobilePrintOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setMobilePrintOpen(false);
-    }
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [mobilePrintOpen]);
 
   const fitToOnePage = useCallback(() => {
     const inner = scaleInnerRef.current;
@@ -95,12 +61,30 @@ export function ResumeBuilderPage() {
     setPrintScale(next);
   }, [printScale]);
 
-  const handlePrint = useReactToPrint({
-    contentRef: printRef,
-    documentTitle: `${(model.profile.fullName || "Resume").replace(/\s+/g, "-")}-FileMitra`,
-    pageStyle: RESUME_PRINT_PAGE_STYLE,
-    onAfterPrint: () => setMobilePrintOpen(false)
-  });
+  const handleDownloadPdf = useCallback(async () => {
+    const el = exportRef.current;
+    if (!el || isDownloading) return;
+    setIsDownloading(true);
+    try {
+      const canvas = await html2canvas(el, {
+        backgroundColor: "#ffffff",
+        scale: 2,
+        useCORS: true
+      });
+      const img = canvas.toDataURL("image/jpeg", 0.96);
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+        compress: true
+      });
+      pdf.addImage(img, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+      const filename = `${(model.profile.fullName || "Resume").replace(/\s+/g, "-")}-FileMitra.pdf`;
+      pdf.save(filename);
+    } finally {
+      setIsDownloading(false);
+    }
+  }, [isDownloading, model.profile.fullName]);
 
   const printScalePanel = (
     <div className="rounded-xl border border-white/10 bg-white/[0.04] px-3 py-3 sm:px-4">
@@ -149,7 +133,7 @@ export function ResumeBuilderPage() {
       <div className="space-y-6">
         <Section
           title="Resume Studio"
-          description="Fill in your résumé below. On larger screens you get a live A4 preview; on phones, open Preview before saving PDF. Use Print scale so everything fits one page (turn off headers/footers in the print dialog)."
+          description="Fill in your résumé below. Desktop shows a live A4 preview; on phones preview is hidden for a cleaner editor. Download PDF directly without opening the browser print dialog."
           titleLevel={1}
         />
 
@@ -159,9 +143,10 @@ export function ResumeBuilderPage() {
               <button
                 type="button"
                 className="btn-primary shrink-0 px-5 py-2.5 text-sm shadow-[0_0_24px_rgba(129,140,248,0.35)]"
-                onClick={() => setMobilePrintOpen(true)}
+                onClick={handleDownloadPdf}
+                disabled={isDownloading}
               >
-                Preview & save PDF
+                {isDownloading ? "Generating PDF..." : "Download PDF"}
               </button>
               <button
                 type="button"
@@ -190,16 +175,17 @@ export function ResumeBuilderPage() {
               <div>
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Live preview</h2>
                 <p className="mt-0.5 text-xs text-slate-500">
-                  True A4 width — scroll to read everything. Print scale uses layout zoom so PDF pagination matches.
+                  True A4 width for desktop editing. PDF download uses this same scaled layout on export.
                 </p>
               </div>
               <div className="flex w-full flex-col gap-2 min-[380px]:w-auto min-[380px]:flex-row min-[380px]:justify-end">
                 <button
                   type="button"
                   className="btn-primary shrink-0 px-5 py-2.5 text-sm shadow-[0_0_24px_rgba(129,140,248,0.35)]"
-                  onClick={() => handlePrint()}
+                  onClick={handleDownloadPdf}
+                  disabled={isDownloading}
                 >
-                  Save as PDF
+                  {isDownloading ? "Generating PDF..." : "Download PDF"}
                 </button>
                 <button
                   type="button"
@@ -235,18 +221,19 @@ export function ResumeBuilderPage() {
         </div>
       </div>
 
-      {/* Single print DOM for react-to-print — off-screen but fully laid out (not display:none). */}
+      {/* Single export DOM — off-screen but fully laid out for canvas -> PDF. */}
       <div
         className="pointer-events-none fixed -left-[10000px] top-0 -z-10 w-[210mm]"
         aria-hidden
         tabIndex={-1}
       >
         <div
-          ref={printRef}
+          ref={exportRef}
           className="resume-print-export-root bg-white"
           style={{
             width: "210mm",
             maxWidth: "100%",
+            height: "297mm",
             overflow: "hidden",
             ...( { zoom: printScale } as CSSProperties )
           }}
@@ -256,47 +243,6 @@ export function ResumeBuilderPage() {
           </div>
         </div>
       </div>
-
-      {mobilePrintOpen ? (
-        <div
-          className="fixed inset-0 z-[100] flex flex-col bg-slate-950/97 p-3 shadow-[0_0_0_1px_rgba(255,255,255,0.06)] md:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="resume-print-preview-title"
-        >
-          <div className="flex shrink-0 items-center justify-between gap-2 pb-3">
-            <h2 id="resume-print-preview-title" className="text-sm font-semibold text-white">
-              Print preview
-            </h2>
-            <button
-              type="button"
-              className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-slate-200 transition hover:border-white/25 hover:text-white"
-              onClick={() => setMobilePrintOpen(false)}
-            >
-              Back to editor
-            </button>
-          </div>
-
-          <p className="shrink-0 pb-2 text-[11px] leading-snug text-slate-400">
-            Quick check before your PDF — same layout as will print. Adjust scale if needed, then Save as PDF.
-          </p>
-
-          <div className="min-h-0 flex-1 overflow-auto overscroll-contain rounded-xl border border-white/10 bg-black/30 p-2">
-            <ResumePreviewMirror model={model} printScale={printScale} className="pb-6 pt-1" />
-          </div>
-
-          <div className="shrink-0 space-y-3 pt-3">
-            {printScalePanel}
-            <button
-              type="button"
-              className="btn-primary w-full px-5 py-3 text-sm shadow-[0_0_24px_rgba(129,140,248,0.35)]"
-              onClick={() => handlePrint()}
-            >
-              Save as PDF
-            </button>
-          </div>
-        </div>
-      ) : null}
     </>
   );
 }
