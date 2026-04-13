@@ -31,10 +31,10 @@ function NavLink(props: { to: string; label: string }) {
   return (
     <Link
       to={props.to}
-      className="shrink-0 rounded-full px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-white/10 hover:text-white sm:px-3 sm:py-2 sm:text-sm"
+      className="flex min-w-0 shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs text-slate-300 transition hover:bg-white/10 hover:text-white max-sm:w-full sm:px-3 sm:py-2 sm:text-sm"
       activeProps={{
         className:
-          "shrink-0 rounded-full bg-white/90 px-2.5 py-1.5 text-xs text-slate-950 shadow sm:px-3 sm:py-2 sm:text-sm"
+          "flex min-w-0 shrink-0 items-center justify-center rounded-full bg-white/90 px-2.5 py-1.5 text-center text-xs text-slate-950 shadow max-sm:w-full sm:px-3 sm:py-2 sm:text-sm"
       }}
     >
       {props.label}
@@ -48,11 +48,11 @@ function ResumeNavLink() {
     <Link
       to="/resume"
       className={clsx(
-        "resume-nav-cta group relative shrink-0 overflow-hidden rounded-full px-2.5 py-1.5 text-xs sm:px-3 sm:py-2 sm:text-sm"
+        "resume-nav-cta group relative flex w-full shrink-0 items-center justify-center overflow-hidden rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
       )}
       activeProps={{
         className: clsx(
-          "resume-nav-cta-active shrink-0 rounded-full px-2.5 py-1.5 text-xs sm:px-3 sm:py-2 sm:text-sm"
+          "resume-nav-cta-active flex w-full shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
         )
       }}
     >
@@ -118,17 +118,26 @@ function RootLayout() {
               </Link>
             </div>
 
-            <nav className="premium-nav-pill relative flex w-full min-w-0 flex-wrap items-center justify-center gap-1.5 rounded-2xl p-1 sm:gap-2 sm:rounded-full sm:p-1.5 md:w-auto md:justify-end">
+            <nav
+              className={clsx(
+                "premium-nav-pill relative w-full min-w-0 rounded-2xl p-1",
+                "grid grid-cols-3 gap-x-0.5 gap-y-2 px-1 py-2 place-items-stretch",
+                "sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-2 sm:rounded-full sm:p-1.5 sm:py-1.5 md:w-auto md:flex-nowrap md:justify-end"
+              )}
+            >
               <NavLink to="/" label="Home" />
               <NavLink to="/blog" label="Blog" />
               <ResumeNavLink />
 
               {/* Mobile: static → dropdown anchors to full nav width. md+: relative → under Tools. */}
-              <div ref={dropdownRef} className="max-md:static md:relative md:shrink-0">
+              <div
+                ref={dropdownRef}
+                className="max-sm:flex max-sm:w-full max-sm:min-w-0 max-sm:flex-col max-md:static md:relative md:shrink-0"
+              >
                 <button
                   type="button"
                   onClick={() => setToolsOpen((prev) => !prev)}
-                  className="cursor-pointer list-none rounded-full px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-white/10 hover:text-white sm:px-3 sm:py-2 sm:text-sm"
+                  className="w-full cursor-pointer list-none rounded-full px-2.5 py-1.5 text-center text-xs text-slate-300 transition hover:bg-white/10 hover:text-white sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
                 >
                   Tools
                 </button>
