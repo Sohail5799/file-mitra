@@ -4,6 +4,10 @@ import io
 import os
 from typing import Literal
 
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
 import fitz
 import pytesseract
 from docx import Document
@@ -395,3 +399,13 @@ def ocr_extract(
     pdf_doc.close()
     return _stream_bytes(out.getvalue(), "ocr-output.pdf", "application/pdf")
 
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DIST_PATH = os.path.join(BASE_DIR, "dist")
+
+app.mount("/assets", StaticFiles(directory=os.path.join(DIST_PATH, "assets")), name="assets")
+
+@app.get("/")
+def serve_react():
+    return FileResponse(os.path.join(DIST_PATH, "index.html"))
