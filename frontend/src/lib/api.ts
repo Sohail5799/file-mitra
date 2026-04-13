@@ -1,5 +1,13 @@
 export type ImageFormat = "jpeg" | "png" | "webp" | "bmp";
 
+/** Production / remote API. Empty = same origin (local Vite `/api` → proxy). */
+function apiUrl(path: string): string {
+  const raw = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() ?? "";
+  const base = raw.replace(/\/+$/, "");
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return base ? `${base}${p}` : p;
+}
+
 export async function convertImage(params: {
   file: File;
   format: ImageFormat;
@@ -12,7 +20,7 @@ export async function convertImage(params: {
     form.append("quality", String(params.quality));
   }
 
-  const res = await fetch("/api/convert/image", {
+  const res = await fetch(apiUrl("/api/convert/image"), {
     method: "POST",
     body: form
   });
@@ -41,7 +49,7 @@ export async function makePdf(params: {
   form.append("orientation", params.orientation);
   form.append("margin", String(params.margin));
 
-  const res = await fetch("/api/pdf/make", {
+  const res = await fetch(apiUrl("/api/pdf/make"), {
     method: "POST",
     body: form
   });
@@ -64,7 +72,7 @@ export async function convertPdf(params: {
   form.append("output", params.output);
   form.append("mode", params.mode);
 
-  const res = await fetch("/api/pdf/convert", {
+  const res = await fetch(apiUrl("/api/pdf/convert"), {
     method: "POST",
     body: form
   });
@@ -89,7 +97,7 @@ export async function compressImage(params: {
     form.append("max_width", String(params.maxWidth));
   }
 
-  const res = await fetch("/api/compress/image", {
+  const res = await fetch(apiUrl("/api/compress/image"), {
     method: "POST",
     body: form
   });
@@ -109,7 +117,7 @@ export async function compressPdf(params: { file: File; level: "low" | "medium" 
   form.append("file", params.file);
   form.append("level", params.level);
 
-  const res = await fetch("/api/compress/pdf", {
+  const res = await fetch(apiUrl("/api/compress/pdf"), {
     method: "POST",
     body: form
   });
@@ -128,7 +136,7 @@ export async function mergePdf(params: { files: File[] }) {
     form.append("files", file);
   }
 
-  const res = await fetch("/api/pdf/merge", {
+  const res = await fetch(apiUrl("/api/pdf/merge"), {
     method: "POST",
     body: form
   });
@@ -154,7 +162,7 @@ export async function runOcr(params: { file: File; language: string; output: "tx
 
   let res: Response;
   try {
-    res = await fetch("/api/ocr/extract", {
+    res = await fetch(apiUrl("/api/ocr/extract"), {
       method: "POST",
       body: form,
       signal: controller.signal

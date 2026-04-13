@@ -4,20 +4,28 @@ import io
 import os
 from typing import Literal
 
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-
 import fitz
 import pytesseract
 from docx import Document
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from openpyxl import Workbook
 from PIL import Image
 from pypdf import PdfReader, PdfWriter
 
 app = FastAPI(title="Converter Backend", version="1.0.0")
+
+_cors_raw = os.environ.get("CORS_ALLOW_ORIGINS", "*").strip()
+_cors_origins = [o.strip() for o in _cors_raw.split(",") if o.strip()] or ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_cors_origins,
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def _stream_bytes(data: bytes, filename: str, media_type: str):
