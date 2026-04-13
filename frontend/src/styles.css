@@ -160,3 +160,51 @@ main::before {
   filter: blur(8px);
 }
 
+/* SweetAlert2 toasts — tighter on small screens */
+.fm-toast-popup.swal2-toast {
+  box-sizing: border-box;
+}
+
+.fm-toast-title.swal2-title {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+@media (max-width: 640px) {
+  .swal2-container.swal2-top-end {
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+    left: 0.5rem !important;
+    width: auto !important;
+    padding: 0 !important;
+  }
+
+  .fm-toast-popup.swal2-toast {
+    width: 100% !important;
+    max-width: min(18rem, calc(100vw - 1rem)) !important;
+    margin: 0 0 0 auto !important;
+    padding: 0.45rem 0.55rem !important;
+    font-size: 0.8125rem !important;
+  }
+
+  .fm-toast-popup.swal2-toast .swal2-title {
+    font-size: 0.8125rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .fm-toast-popup.swal2-toast .swal2-timer-progress-bar {
+    height: 0.15rem !important;
+  }
+
+  .fm-toast-popup.swal2-toast .swal2-icon {
+    width: 1.25rem !important;
+    min-width: 1.25rem !important;
+    height: 1.25rem !important;
+    margin: 0 0.4rem 0 0 !important;
+  }
+
+  .fm-toast-popup.swal2-toast .swal2-icon-content {
+    font-size: 0.65rem !important;
+  }
+}
+

@@ -10,7 +10,7 @@ export function Card(props: {
   return (
     <div
       className={clsx(
-        "surface-muted p-5",
+        "surface-muted p-4 sm:p-5",
         props.className
       )}
     >

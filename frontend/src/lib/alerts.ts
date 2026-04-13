@@ -5,7 +5,12 @@ const toast = Swal.mixin({
   position: "top-end",
   timer: 2600,
   timerProgressBar: true,
-  showConfirmButton: false
+  showConfirmButton: false,
+  width: "22rem",
+  customClass: {
+    popup: "fm-toast-popup",
+    title: "fm-toast-title"
+  }
 });
 
 export function showSuccess(message: string) {

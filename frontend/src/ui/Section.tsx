@@ -11,7 +11,7 @@ export function Section(props: {
   return (
     <section
       className={clsx(
-        "surface relative overflow-hidden p-6",
+        "surface relative overflow-hidden p-4 sm:p-6",
         props.className
       )}
     >
@@ -20,11 +20,13 @@ export function Section(props: {
 
       <header className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight text-white">
+          <h2 className="text-lg font-semibold tracking-tight text-white sm:text-xl">
             {props.title}
           </h2>
           {props.description ? (
-            <p className="mt-1 text-sm text-slate-300">{props.description}</p>
+            <p className="mt-1 text-xs leading-relaxed text-slate-300 sm:text-sm">
+              {props.description}
+            </p>
           ) : null}
         </div>
         {props.right ? <div>{props.right}</div> : null}

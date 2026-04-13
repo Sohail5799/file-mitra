@@ -95,17 +95,17 @@ export function HomePage() {
               <span className="h-2 w-2 rounded-full bg-emerald-400" />
               Modern tools now live
             </div> */}
-            <div className="text-3xl font-semibold tracking-tight text-white md:text-4xl">
+            <div className="text-2xl font-semibold tracking-tight text-white sm:text-3xl md:text-4xl">
               Premium converter suite for daily work
             </div>
-            <p className="mt-3 max-w-xl text-sm text-slate-300 md:text-base">
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-300 md:text-base">
               Fast performance, elegant UI, and practical tools that keep expanding as your workflow grows.
             </p>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Link to="/pdf-tools" className="btn-primary">
+            <div className="mt-3 flex flex-col gap-2 min-[400px]:flex-row min-[400px]:flex-wrap min-[400px]:items-center">
+              <Link to="/pdf-tools" className="btn-primary w-full justify-center min-[400px]:w-auto">
                 Open PDF Tools
               </Link>
-              <Link to="/image-tools" className="btn-secondary">
+              <Link to="/image-tools" className="btn-secondary w-full justify-center min-[400px]:w-auto">
                 Open Image Tools
               </Link>
             </div>
@@ -182,9 +182,9 @@ export function HomePage() {
         <div className="grid gap-4 md:grid-cols-3">
           <div className="surface-muted p-4 md:col-span-2">
             <div className="text-sm font-medium text-slate-200">Weekly trend</div>
-            <div className="mt-4 flex h-52 items-end gap-2">
+            <div className="mt-4 flex h-44 min-h-0 items-end gap-1 sm:h-52 sm:gap-2">
               {animatedTrend.map((item) => (
-                <div key={item.label} className="flex flex-1 flex-col items-center gap-2">
+                <div key={item.label} className="flex min-w-0 flex-1 flex-col items-center gap-1 sm:gap-2">
                   <div className="text-[10px] text-slate-400 tabular-nums">{item.current}k</div>
                   <div className="relative w-full overflow-hidden rounded-t-lg bg-white/5" style={{ height: "140px" }}>
                     <div
@@ -251,7 +251,7 @@ export function HomePage() {
         </div>
       </Section>
 
-      <section className="surface p-6">
+      <section className="surface p-4 sm:p-6">
         <div className="grid gap-4 md:grid-cols-3">
           <div>
             <div className="text-lg font-semibold text-white">Converter</div>

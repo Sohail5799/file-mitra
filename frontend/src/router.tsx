@@ -25,9 +25,10 @@ function NavLink(props: { to: string; label: string }) {
   return (
     <Link
       to={props.to}
-      className="rounded-full px-3 py-2 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+      className="shrink-0 rounded-full px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-white/10 hover:text-white sm:px-3 sm:py-2 sm:text-sm"
       activeProps={{
-        className: "rounded-full bg-white/90 px-3 py-2 text-sm text-slate-950 shadow"
+        className:
+          "shrink-0 rounded-full bg-white/90 px-2.5 py-1.5 text-xs text-slate-950 shadow sm:px-3 sm:py-2 sm:text-sm"
       }}
     >
       {props.label}
@@ -57,56 +58,81 @@ function RootLayout() {
   }, []);
 
   return (
-    <div className="min-h-screen">
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <header className="sticky top-4 z-30">
-          <div className="app-shell premium-nav-wrap flex flex-col gap-4 rounded-3xl p-4 md:flex-row md:items-center md:justify-between md:px-5">
-            <div className="flex items-center justify-between gap-4">
-              <Link to="/" className="flex items-center gap-3 rounded-2xl p-1 transition hover:bg-white/5">
-                <div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-indigo-200 via-white to-cyan-100 text-slate-900 shadow-lg shadow-indigo-200/20">
-                  <div className="text-xs font-bold tracking-wide">FM</div>
+    <div className="min-h-screen min-w-0">
+      <div className="mx-auto max-w-6xl px-3 py-4 sm:px-4 sm:py-8">
+        <header className="sticky top-2 z-30 sm:top-4">
+          <div className="app-shell premium-nav-wrap flex min-w-0 flex-col gap-3 rounded-2xl p-3 sm:gap-4 sm:rounded-3xl sm:p-4 md:flex-row md:items-center md:justify-between md:px-5">
+            <div className="flex min-w-0 items-center justify-between gap-3">
+              <Link
+                to="/"
+                className="flex min-w-0 items-center gap-2 rounded-2xl p-1 transition hover:bg-white/5 sm:gap-3"
+              >
+                <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-indigo-200 via-white to-cyan-100 text-slate-900 shadow-lg shadow-indigo-200/20 sm:h-10 sm:w-10 sm:rounded-2xl">
+                  <div className="text-[10px] font-bold tracking-wide sm:text-xs">FM</div>
                 </div>
-                <div>
-                  <div className="text-base font-semibold tracking-tight text-white">
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold tracking-tight text-white sm:text-base">
                     File Mitra
                   </div>
-                  <div className="text-xs text-slate-400">Premium file utility suite</div>
+                  <div className="text-[10px] leading-tight text-slate-400 sm:text-xs">
+                    Premium file utility suite
+                  </div>
                 </div>
               </Link>
             </div>
 
-            <nav className="premium-nav-pill flex flex-wrap items-center gap-2 rounded-full p-1.5">
+            <nav className="premium-nav-pill flex w-full min-w-0 flex-wrap items-center justify-center gap-1.5 rounded-2xl p-1 sm:gap-2 sm:rounded-full sm:p-1.5 md:w-auto md:justify-end">
               <NavLink to="/" label="Home" />
 
-              <div className="group relative" ref={dropdownRef}>
+              <div className="relative shrink-0" ref={dropdownRef}>
                 <button
                   type="button"
                   onClick={() => setToolsOpen((prev) => !prev)}
-                  className="cursor-pointer list-none rounded-full px-3 py-2 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+                  className="cursor-pointer list-none rounded-full px-2.5 py-1.5 text-xs text-slate-300 transition hover:bg-white/10 hover:text-white sm:px-3 sm:py-2 sm:text-sm"
                 >
                   Tools
                 </button>
                 <div
-                  className={`premium-dropdown absolute right-0 top-12 z-40 w-64 rounded-2xl p-2 shadow-2xl ${
+                  className={`premium-dropdown absolute left-0 right-0 top-11 z-40 mx-auto w-full max-w-[min(20rem,calc(100vw-1.75rem))] rounded-2xl p-2 shadow-2xl sm:left-auto sm:right-0 sm:top-12 sm:mx-0 sm:w-64 sm:max-w-none ${
                     toolsOpen ? "premium-dropdown-open" : ""
                   }`}
                 >
-                  <div className="mb-2 px-2 text-[11px] uppercase tracking-[0.2em] text-slate-400">Tool Hubs</div>
-                  <div className="grid gap-1">
-                    <Link to="/image-tools" onClick={() => setToolsOpen(false)} className="rounded-full px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10 hover:text-white">Image Tools (Convert + Compress)</Link>
-                    <Link to="/pdf-tools" onClick={() => setToolsOpen(false)} className="rounded-full px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10 hover:text-white">PDF Tools (Convert + Compress + Merge)</Link>
-                    <Link to="/ocr" onClick={() => setToolsOpen(false)} className="rounded-full px-3 py-2 text-sm text-slate-200 transition hover:bg-white/10 hover:text-white">OCR Extractor</Link>
+                  <div className="mb-2 px-2 text-[10px] uppercase tracking-[0.18em] text-slate-400 sm:text-[11px] sm:tracking-[0.2em]">
+                    Tool Hubs
+                  </div>
+                  <div className="grid gap-0.5">
+                    <Link
+                      to="/image-tools"
+                      onClick={() => setToolsOpen(false)}
+                      className="rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                    >
+                      Image Tools (Convert + Compress)
+                    </Link>
+                    <Link
+                      to="/pdf-tools"
+                      onClick={() => setToolsOpen(false)}
+                      className="rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                    >
+                      PDF Tools (Convert + Compress + Merge)
+                    </Link>
+                    <Link
+                      to="/ocr"
+                      onClick={() => setToolsOpen(false)}
+                      className="rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                    >
+                      OCR Extractor
+                    </Link>
                   </div>
                 </div>
               </div>
 
-              <NavLink to="/about" label="About Us" />
-              <NavLink to="/contact" label="Contact Us" />
+              <NavLink to="/about" label="About" />
+              <NavLink to="/contact" label="Contact" />
             </nav>
           </div>
         </header>
 
-        <main className="mt-8">
+        <main className="mt-5 min-w-0 sm:mt-8">
           <Outlet />
         </main>
 
