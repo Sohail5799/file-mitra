@@ -3,27 +3,32 @@ import Swal from "sweetalert2";
 const toast = Swal.mixin({
   toast: true,
   position: "top-end",
-  timer: 2600,
+  timer: 2800,
   timerProgressBar: true,
   showConfirmButton: false,
-  width: "22rem",
+  width: "min(22rem, calc(100vw - 1.25rem))",
   customClass: {
-    popup: "fm-toast-popup",
     title: "fm-toast-title"
   }
 });
 
 export function showSuccess(message: string) {
   return toast.fire({
-    icon: "success",
-    title: message
+    title: message,
+    customClass: {
+      popup: "fm-toast-popup fm-toast-popup--success",
+      title: "fm-toast-title"
+    }
   });
 }
 
 export function showError(message: string) {
   return toast.fire({
-    icon: "error",
-    title: message
+    title: message,
+    customClass: {
+      popup: "fm-toast-popup fm-toast-popup--error",
+      title: "fm-toast-title"
+    }
   });
 }
 

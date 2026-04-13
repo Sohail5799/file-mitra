@@ -81,10 +81,11 @@ function RootLayout() {
               </Link>
             </div>
 
-            <nav className="premium-nav-pill flex w-full min-w-0 flex-wrap items-center justify-center gap-1.5 rounded-2xl p-1 sm:gap-2 sm:rounded-full sm:p-1.5 md:w-auto md:justify-end">
+            <nav className="premium-nav-pill relative flex w-full min-w-0 flex-wrap items-center justify-center gap-1.5 rounded-2xl p-1 sm:gap-2 sm:rounded-full sm:p-1.5 md:w-auto md:justify-end">
               <NavLink to="/" label="Home" />
 
-              <div className="relative shrink-0" ref={dropdownRef}>
+              {/* Mobile: static → dropdown anchors to full nav width. md+: relative → under Tools. */}
+              <div ref={dropdownRef} className="max-md:static md:relative md:shrink-0">
                 <button
                   type="button"
                   onClick={() => setToolsOpen((prev) => !prev)}
@@ -93,32 +94,32 @@ function RootLayout() {
                   Tools
                 </button>
                 <div
-                  className={`premium-dropdown absolute left-0 right-0 top-11 z-40 mx-auto w-full max-w-[min(20rem,calc(100vw-1.75rem))] rounded-2xl p-2 shadow-2xl sm:left-auto sm:right-0 sm:top-12 sm:mx-0 sm:w-64 sm:max-w-none ${
+                  className={`premium-dropdown premium-dropdown-panel absolute z-40 mt-1 max-md:inset-x-1 max-md:top-full max-md:min-w-0 md:right-0 md:top-full md:w-64 ${
                     toolsOpen ? "premium-dropdown-open" : ""
-                  }`}
+                  } `}
                 >
                   <div className="mb-2 px-2 text-[10px] uppercase tracking-[0.18em] text-slate-400 sm:text-[11px] sm:tracking-[0.2em]">
                     Tool Hubs
                   </div>
-                  <div className="grid gap-0.5">
+                  <div className="grid min-w-0 gap-0.5">
                     <Link
                       to="/image-tools"
                       onClick={() => setToolsOpen(false)}
-                      className="rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                      className="break-words rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
                     >
                       Image Tools (Convert + Compress)
                     </Link>
                     <Link
                       to="/pdf-tools"
                       onClick={() => setToolsOpen(false)}
-                      className="rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                      className="break-words rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
                     >
                       PDF Tools (Convert + Compress + Merge)
                     </Link>
                     <Link
                       to="/ocr"
                       onClick={() => setToolsOpen(false)}
-                      className="rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                      className="break-words rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
                     >
                       OCR Extractor
                     </Link>
