@@ -22,6 +22,8 @@ import { ContactPage } from "./views/ContactPage";
 import { PrivacyPolicyPage } from "./views/PrivacyPolicyPage";
 import { ImageToolsPage } from "./views/ImageToolsPage";
 import { PdfToolsPage } from "./views/PdfToolsPage";
+import { BlogIndexPage } from "./views/BlogIndexPage";
+import { BlogPostPage } from "./views/BlogPostPage";
 
 function NavLink(props: { to: string; label: string }) {
   return (
@@ -94,6 +96,7 @@ function RootLayout() {
 
             <nav className="premium-nav-pill relative flex w-full min-w-0 flex-wrap items-center justify-center gap-1.5 rounded-2xl p-1 sm:gap-2 sm:rounded-full sm:p-1.5 md:w-auto md:justify-end">
               <NavLink to="/" label="Home" />
+              <NavLink to="/blog" label="Blog" />
 
               {/* Mobile: static → dropdown anchors to full nav width. md+: relative → under Tools. */}
               <div ref={dropdownRef} className="max-md:static md:relative md:shrink-0">
@@ -134,6 +137,13 @@ function RootLayout() {
                     >
                       OCR Extractor
                     </Link>
+                    <Link
+                      to="/blog"
+                      onClick={() => setToolsOpen(false)}
+                      className="break-words rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                    >
+                      Blog & guides
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -151,7 +161,8 @@ function RootLayout() {
         <footer className="mt-12 border-t border-white/10 pt-6">
           <div className="flex flex-col gap-3 text-xs text-slate-400 md:flex-row md:items-center md:justify-between">
             <div>Fast, private, and simple.</div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <Link to="/blog" className="hover:text-white">Blog</Link>
               <Link to="/about" className="hover:text-white">About</Link>
               <Link to="/contact" className="hover:text-white">Contact</Link>
               <Link to="/privacy-policy" className="hover:text-white">Privacy</Link>
@@ -245,6 +256,18 @@ const pdfToolsRoute = new Route({
   component: PdfToolsPage
 });
 
+const blogIndexRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/blog",
+  component: BlogIndexPage
+});
+
+const blogPostRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/blog/$slug",
+  component: BlogPostPage
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   imageToolsRoute,
@@ -258,7 +281,9 @@ const routeTree = rootRoute.addChildren([
   ocrRoute,
   aboutRoute,
   contactRoute,
-  privacyPolicyRoute
+  privacyPolicyRoute,
+  blogIndexRoute,
+  blogPostRoute
 ]);
 
 const router = new Router({ routeTree });

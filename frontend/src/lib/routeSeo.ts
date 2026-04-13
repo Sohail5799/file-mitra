@@ -1,3 +1,4 @@
+import { getBlogPostBySlug } from "../content/blogPosts";
 import { SITE_NAME, SITE_ORIGIN } from "./site";
 
 export type RouteSeo = {
@@ -85,6 +86,13 @@ const ROUTES: Record<string, RouteSeo> = {
     description:
       "How File Mitra handles your files and data: processing for conversions, no unnecessary retention, and practical privacy practices.",
     keywords: "File Mitra privacy, data policy, file processing privacy"
+  },
+  "/blog": {
+    title: `${SITE_NAME} Blog — guides on PDF & image workflows`,
+    description:
+      "Practical articles on JPEG vs PNG vs WebP, PDF compression, table extraction to Excel, OCR for scans, merging PDFs, and FAQs about using File Mitra safely.",
+    keywords:
+      "File Mitra blog, PDF tips, image compression guide, OCR guide, merge PDF tutorial, PDF to Excel help, file converter FAQ"
   }
 };
 
@@ -96,6 +104,22 @@ function normalizePath(pathname: string): string {
 
 export function getSeoForPath(pathname: string): RouteSeo {
   const key = normalizePath(pathname);
+  if (key.startsWith("/blog/")) {
+    const slug = key.slice("/blog/".length);
+    const post = getBlogPostBySlug(slug);
+    if (post) {
+      return {
+        title: `${post.title} | ${SITE_NAME} Blog`,
+        description: post.excerpt,
+        keywords: `${post.keywords}, File Mitra blog, file conversion tips`
+      };
+    }
+    return {
+      title: `Article | ${SITE_NAME} Blog`,
+      description: "Guides and tips for image and PDF workflows on File Mitra.",
+      keywords: "File Mitra blog"
+    };
+  }
   return ROUTES[key] ?? ROUTES["/"];
 }
 
@@ -132,7 +156,9 @@ export function applyRouteSeo(pathname: string): void {
 
   upsertLink("canonical", canonical);
 
-  upsertMeta("property", "og:type", "website");
+  const blogSlug = path.startsWith("/blog/") ? path.slice("/blog/".length) : "";
+  const blogArticle = blogSlug ? getBlogPostBySlug(blogSlug) : undefined;
+  upsertMeta("property", "og:type", blogArticle ? "article" : "website");
   upsertMeta("property", "og:site_name", SITE_NAME);
   upsertMeta("property", "og:title", seo.title);
   upsertMeta("property", "og:description", seo.description);

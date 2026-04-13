@@ -10,6 +10,13 @@
   <url><loc>https://file-mitra.vercel.app/pdf-compressor</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
   <url><loc>https://file-mitra.vercel.app/pdf-merge</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
   <url><loc>https://file-mitra.vercel.app/ocr</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://file-mitra.vercel.app/blog</loc><changefreq>weekly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://file-mitra.vercel.app/blog/jpeg-vs-png-vs-webp-choosing-image-format</loc><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://file-mitra.vercel.app/blog/reduce-pdf-size-without-ruining-readability</loc><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://file-mitra.vercel.app/blog/pdf-to-excel-when-table-extraction-works-best</loc><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://file-mitra.vercel.app/blog/ocr-tips-for-scans-invoices-and-receipts</loc><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://file-mitra.vercel.app/blog/merge-pdfs-order-bookmarks-and-pitfalls</loc><changefreq>monthly</changefreq><priority>0.65</priority></url>
+  <url><loc>https://file-mitra.vercel.app/blog/image-compression-for-web-core-web-vitals</loc><changefreq>monthly</changefreq><priority>0.65</priority></url>
   <url><loc>https://file-mitra.vercel.app/about</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://file-mitra.vercel.app/contact</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
   <url><loc>https://file-mitra.vercel.app/privacy-policy</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>
