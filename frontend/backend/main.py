@@ -1,19 +1,38 @@
 from __future__ import annotations
 
+import html
 import io
 import os
+import smtplib
+import ssl
+from email.message import EmailMessage
+from email.utils import formataddr
 from typing import Literal
 
+import certifi
 import fitz
 import pytesseract
 from docx import Document
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from openpyxl import Workbook
 from PIL import Image
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from pypdf import PdfReader, PdfWriter
+
+_BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
+_FRONTEND_ROOT = os.path.dirname(_BACKEND_DIR)
+_REPO_ROOT = os.path.dirname(_FRONTEND_ROOT)
+for _dotenv_path in (
+    os.path.join(_REPO_ROOT, ".env"),
+    os.path.join(_FRONTEND_ROOT, ".env"),
+    os.path.join(_BACKEND_DIR, ".env"),
+):
+    if os.path.isfile(_dotenv_path):
+        load_dotenv(_dotenv_path, override=False)
 
 app = FastAPI(title="Converter Backend", version="1.0.0")
 
@@ -109,8 +128,173 @@ def _ocr_image_pil(img: Image.Image, language: str) -> str:
         ) from exc
 
 
+class ContactPayload(BaseModel):
+    name: str = Field(min_length=2, max_length=120)
+    email: EmailStr
+    subject: str = Field(default="", max_length=200)
+    message: str = Field(min_length=6, max_length=8000)
+
+    @field_validator("name", "subject", "message", mode="before")
+    @classmethod
+    def _strip_text(cls, v: object) -> object:
+        return v.strip() if isinstance(v, str) else v
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def _strip_email(cls, v: object) -> object:
+        return v.strip() if isinstance(v, str) else v
+
+
+def _env(key: str, default: str = "") -> str:
+    return (os.environ.get(key) or default).strip().strip("'\"")
+
+
+def _contact_from_header() -> str:
+    raw = _env("DEFAULT_FROM_EMAIL") or _env("MAIL_FROM")
+    inbox = _env("CONTACT_INBOX_EMAIL")
+    from_name = _env("DEFAULT_FROM_NAME") or "Sohail"
+
+    if raw and "@" in raw and "<" not in raw:
+        return raw
+    if raw and "<" in raw and ">" in raw:
+        inner = raw[raw.index("<") + 1 : raw.index(">")].strip()
+        if "@" in inner:
+            return raw
+        if inbox and "@" in inbox:
+            return formataddr((from_name, inbox))
+    if inbox and "@" in inbox:
+        return formataddr((from_name, inbox))
+    raise RuntimeError(
+        "Set CONTACT_INBOX_EMAIL and DEFAULT_FROM_EMAIL (SendGrid-verified), e.g. Sohail <you@domain.com>."
+    )
+
+
+def _contact_inbox() -> str:
+    explicit = _env("CONTACT_INBOX_EMAIL")
+    if explicit and "@" in explicit:
+        return explicit
+    from_h = _contact_from_header()
+    if "<" in from_h and ">" in from_h:
+        inner = from_h[from_h.index("<") + 1 : from_h.index(">")].strip()
+        if "@" in inner:
+            return inner
+    if "@" in from_h:
+        return from_h
+    raise RuntimeError("Set CONTACT_INBOX_EMAIL.")
+
+
+def _send_smtp(messages: list[EmailMessage]) -> None:
+    host = _env("EMAIL_HOST", "smtp.sendgrid.net")
+    port = int(_env("EMAIL_PORT", "587") or "587")
+    user = _env("SENDGRID_USERNAME", "apikey")
+    password = _env("SENDGRID_PASSWORD") or _env("SENDGRID_API_KEY")
+    if not password:
+        raise RuntimeError("Set SENDGRID_PASSWORD or SENDGRID_API_KEY.")
+
+    if _env("EMAIL_TLS_VERIFY", "true").lower() in ("0", "false", "no", "off"):
+        ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+    else:
+        ctx = ssl.create_default_context(cafile=certifi.where())
+
+    with smtplib.SMTP(host, port, timeout=30) as smtp:
+        smtp.starttls(context=ctx)
+        smtp.login(user, password)
+        for msg in messages:
+            smtp.send_message(msg)
+
+
+def _contact_template_plain(name: str, message: str) -> str:
+    wave, pin, smile = "\U0001f64c", "\U0001f4cc", "\U0001f60a"
+    return (
+        f"Hi {name},\n\n"
+        f"Thanks for reaching out to us! {wave}\n\n"
+        "We've received your message and our team will get back to you as soon as possible.\n\n"
+        f"### {pin} Your message details:\n\n"
+        f"{message}\n\n"
+        "In the meantime, you can continue using our tools to:\n\n"
+        "* Compress files\n"
+        "* Convert file formats/extensions\n"
+        "* Split or merge PDFs\n"
+        "* And more useful features\n\n"
+        "We usually respond within **24 hours**.\n\n"
+        "---\n\n"
+        "If your query is urgent, feel free to reply directly to this email.\n\n"
+        f"Thanks for contacting us {smile}\n\n"
+        "**With regards,**\n"
+        "Sohail\n\n"
+        "---\n"
+    )
+
+
+def _contact_template_html(name: str, message: str) -> str:
+    n, m = html.escape(name), html.escape(message).replace("\n", "<br />\n")
+    wave, pin, smile = "\U0001f64c", "\U0001f4cc", "\U0001f60a"
+    return f"""<!DOCTYPE html>
+<html><body style="font-family:system-ui,sans-serif;line-height:1.55;color:#0f172a;">
+<p>Hi {n},</p>
+<p>Thanks for reaching out to us! {wave}</p>
+<p>We've received your message and our team will get back to you as soon as possible.</p>
+<h3>{pin} Your message details:</h3>
+<p style="white-space:pre-wrap;border-left:3px solid #6366f1;padding-left:12px;">{m}</p>
+<p>In the meantime, you can continue using our tools to:</p>
+<ul>
+<li>Compress files</li>
+<li>Convert file formats/extensions</li>
+<li>Split or merge PDFs</li>
+<li>And more useful features</li>
+</ul>
+<p>We usually respond within <strong>24 hours</strong>.</p>
+<hr />
+<p>If your query is urgent, feel free to reply directly to this email.</p>
+<p>Thanks for contacting us {smile}</p>
+<p><strong>With regards,</strong><br />Sohail</p>
+<hr />
+</body></html>"""
+
+
 @app.get("/api/health")
 def health():
+    return JSONResponse({"ok": True})
+
+
+@app.post("/api/contact")
+def contact_submit(payload: ContactPayload):
+    try:
+        from_header = _contact_from_header()
+        inbox = _contact_inbox()
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    subj = payload.subject or "File Mitra"
+    team = EmailMessage()
+    team["Subject"] = f"[Contact] {subj}"
+    team["From"] = from_header
+    team["To"] = inbox
+    team["Reply-To"] = str(payload.email)
+    team.set_content(
+        f"Name: {payload.name}\nEmail: {payload.email}\nSubject: {subj}\n\n{payload.message}\n",
+        charset="utf-8",
+    )
+
+    user = EmailMessage()
+    user["Subject"] = "Thanks for contacting File Mitra"
+    user["From"] = from_header
+    user["To"] = str(payload.email)
+    user["Reply-To"] = inbox
+    user.set_content(_contact_template_plain(payload.name, payload.message), charset="utf-8")
+    user.add_alternative(_contact_template_html(payload.name, payload.message), subtype="html", charset="utf-8")
+
+    try:
+        _send_smtp([team, user])
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except OSError as exc:
+        raise HTTPException(status_code=502, detail=f"Mail delivery failed: {exc!s}") from exc
+    except smtplib.SMTPException as exc:
+        raise HTTPException(status_code=502, detail=f"Mail delivery failed: {exc!s}") from exc
+
     return JSONResponse({"ok": True})
 
 

@@ -186,3 +186,35 @@ export async function runOcr(params: { file: File; language: string; output: "tx
   return { blob, filename };
 }
 
+export async function submitContact(params: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}): Promise<{ ok: boolean }> {
+  const res = await fetch(apiUrl("/api/contact"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params)
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    let detail = text;
+    try {
+      const j = JSON.parse(text) as { detail?: unknown };
+      if (typeof j.detail === "string") {
+        detail = j.detail;
+      } else if (Array.isArray(j.detail)) {
+        detail = j.detail
+          .map((x) =>
+            typeof x === "object" && x && "msg" in x ? String((x as { msg: string }).msg) : String(x)
+          )
+          .join("; ");
+      }
+    } catch {
+    }
+    throw new Error(detail || `Contact failed (${res.status})`);
+  }
+  return (await res.json()) as { ok: boolean };
+}
+
