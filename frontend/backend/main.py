@@ -614,23 +614,27 @@ def ocr_extract(
 
 
 # backend/main.py → parent dir is frontend app root (where package.json / dist/ live)
-_BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DIST_PATH = os.environ.get("FRONTEND_DIST_PATH", os.path.join(_BASE, "dist"))
-_ASSETS_DIR = os.path.join(DIST_PATH, "assets")
-_INDEX_HTML = os.path.join(DIST_PATH, "index.html")
+# _BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# DIST_PATH = os.environ.get("FRONTEND_DIST_PATH", os.path.join(_BASE, "dist"))
+# _ASSETS_DIR = os.path.join(DIST_PATH, "assets")
+# _INDEX_HTML = os.path.join(DIST_PATH, "index.html")
 
-if os.path.isdir(_ASSETS_DIR):
-    app.mount("/assets", StaticFiles(directory=_ASSETS_DIR), name="assets")
+# if os.path.isdir(_ASSETS_DIR):
+#     app.mount("/assets", StaticFiles(directory=_ASSETS_DIR), name="assets")
 
+
+# @app.get("/")
+# def serve_react():
+#     if not os.path.isfile(_INDEX_HTML):
+#         return JSONResponse(
+#             status_code=503,
+#             content={
+#                 "detail": "Frontend build not found. Run `npm run build` in the frontend root.",
+#                 "expected_index": _INDEX_HTML,
+#             },
+#         )
+#     return FileResponse(_INDEX_HTML)
 
 @app.get("/")
-def serve_react():
-    if not os.path.isfile(_INDEX_HTML):
-        return JSONResponse(
-            status_code=503,
-            content={
-                "detail": "Frontend build not found. Run `npm run build` in the frontend root.",
-                "expected_index": _INDEX_HTML,
-            },
-        )
-    return FileResponse(_INDEX_HTML)
+def root():
+    return {"status": "backend running"}
