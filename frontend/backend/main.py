@@ -19,6 +19,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from openpyxl import Workbook
+from openpyxl.styles import Alignment
+from openpyxl.utils import get_column_letter
 from PIL import Image
 from pydantic import BaseModel, EmailStr, Field, field_validator
 from pypdf import PdfReader, PdfWriter
@@ -469,6 +471,25 @@ def convert_pdf(
             continue
         for i, line in enumerate(lines, start=1):
             sheet.append([page_no, i, line])
+
+    # Auto-size column widths based on extracted content to keep XLSX readable.
+    for col in range(1, sheet.max_column + 1):
+        max_len = 0
+        for row in range(1, sheet.max_row + 1):
+            value = sheet.cell(row=row, column=col).value
+            if value is None:
+                continue
+            text = str(value)
+            cell_len = max(len(part) for part in text.splitlines()) if text else 0
+            if cell_len > max_len:
+                max_len = cell_len
+        # Keep practical bounds so a single long line does not break layout.
+        sheet.column_dimensions[get_column_letter(col)].width = min(max(max_len + 2, 8), 70)
+
+    # Make extracted text easier to scan when long lines wrap.
+    for row in range(2, sheet.max_row + 1):
+        sheet.cell(row=row, column=3).alignment = Alignment(vertical="top", wrap_text=True)
+
     _ = mode
     out = io.BytesIO()
     workbook.save(out)
