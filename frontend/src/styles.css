@@ -264,6 +264,15 @@ button.nav-mag-link {
   justify-content: flex-start;
 }
 
+/* Hamburger sheet — full-width rows, readable tap targets */
+.nav-mag-link--sheet {
+  width: 100%;
+  justify-content: flex-start;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nav-mag-link:hover,
   .nav-mag-link--active:hover {

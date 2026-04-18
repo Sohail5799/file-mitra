@@ -31,14 +31,20 @@ const ResumeBuilderPage = lazy(() =>
   import("./views/resume/ResumeBuilderPage").then((m) => ({ default: m.ResumeBuilderPage }))
 );
 
-function NavLink(props: { to: string; label: string }) {
+function NavLink(props: { to: string; label: string; onPick?: () => void; className?: string }) {
   return (
     <Link
       to={props.to}
-      className="nav-mag-link flex min-w-0 shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs max-sm:w-full sm:px-3 sm:py-2 sm:text-sm"
+      onClick={() => props.onPick?.()}
+      className={clsx(
+        "nav-mag-link flex min-w-0 shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs sm:px-3 sm:py-2 sm:text-sm",
+        props.className
+      )}
       activeProps={{
-        className:
-          "nav-mag-link nav-mag-link--active flex min-w-0 shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs max-sm:w-full sm:px-3 sm:py-2 sm:text-sm"
+        className: clsx(
+          "nav-mag-link nav-mag-link--active flex min-w-0 shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs sm:px-3 sm:py-2 sm:text-sm",
+          props.className
+        )
       }}
     >
       {props.label}
@@ -47,16 +53,19 @@ function NavLink(props: { to: string; label: string }) {
 }
 
 /** Stand-out CTA in the nav — soft pulse + shimmer so new visitors notice Resume. */
-function ResumeNavLink() {
+function ResumeNavLink(props: { onPick?: () => void; className?: string }) {
   return (
     <Link
       to="/resume"
+      onClick={() => props.onPick?.()}
       className={clsx(
-        "resume-nav-cta group relative flex w-full shrink-0 items-center justify-center overflow-hidden rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
+        "resume-nav-cta group relative flex w-full shrink-0 items-center justify-center overflow-hidden rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm",
+        props.className
       )}
       activeProps={{
         className: clsx(
-          "resume-nav-cta-active flex w-full shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
+          "resume-nav-cta-active flex w-full shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm",
+          props.className
         )
       }}
     >
@@ -70,16 +79,19 @@ function ResumeNavLink() {
 }
 
 /** QR CTA in navbar (visible outside Tools dropdown). */
-function QrNavLink() {
+function QrNavLink(props: { onPick?: () => void; className?: string }) {
   return (
     <Link
       to="/qr-code"
+      onClick={() => props.onPick?.()}
       className={clsx(
-        "qr-nav-cta group relative flex w-full shrink-0 items-center justify-center overflow-hidden rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
+        "qr-nav-cta group relative flex w-full shrink-0 items-center justify-center overflow-hidden rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm",
+        props.className
       )}
       activeProps={{
         className: clsx(
-          "qr-nav-cta-active flex w-full shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
+          "qr-nav-cta-active flex w-full shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm",
+          props.className
         )
       }}
     >
@@ -102,13 +114,26 @@ function RouteMetaSync() {
 
 function RootLayout() {
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
+
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useEffect(() => {
+    setToolsOpen(false);
+    setMobileNavOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     function onPointerDown(event: MouseEvent | TouchEvent) {
-      if (!dropdownRef.current) return;
       const target = event.target as Node | null;
-      if (target && !dropdownRef.current.contains(target)) {
+      if (!target) return;
+      if (headerRef.current && !headerRef.current.contains(target)) {
+        setToolsOpen(false);
+        setMobileNavOpen(false);
+        return;
+      }
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setToolsOpen(false);
       }
     }
@@ -121,16 +146,33 @@ function RootLayout() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileNavOpen]);
+
+  const closeAllNav = () => {
+    setMobileNavOpen(false);
+    setToolsOpen(false);
+  };
+
+  const sheetLink = "nav-mag-link nav-mag-link--sheet";
+
   return (
     <div className="min-h-screen min-w-0">
       <RouteMetaSync />
       <div className="mx-auto max-w-6xl px-3 py-4 sm:px-4 sm:py-8">
-        <header className="sticky top-2 z-30 sm:top-4">
+        <header ref={headerRef} className="relative z-20 md:sticky md:top-4 md:z-30">
           <div className="app-shell premium-nav-wrap flex min-w-0 flex-col gap-3 rounded-2xl p-3 sm:gap-4 sm:rounded-3xl sm:p-4 md:flex-row md:items-center md:justify-between md:px-5">
-            <div className="flex min-w-0 items-center justify-between gap-3">
+            <div className="flex min-w-0 w-full items-center justify-between gap-3 md:w-auto md:justify-start">
               <Link
                 to="/"
-                className="flex min-w-0 items-center gap-2 rounded-2xl p-1 transition hover:bg-white/5 sm:gap-3"
+                onClick={() => setMobileNavOpen(false)}
+                className="flex min-w-0 flex-1 items-center gap-2 rounded-2xl p-1 transition hover:bg-white/5 sm:flex-initial sm:gap-3"
               >
                 <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-indigo-200 via-white to-cyan-100 text-slate-900 shadow-lg shadow-indigo-200/20 sm:h-10 sm:w-10 sm:rounded-2xl">
                   <div className="text-[10px] font-bold tracking-wide sm:text-xs">FM</div>
@@ -139,18 +181,36 @@ function RootLayout() {
                   <div className="truncate text-sm font-semibold tracking-tight text-white sm:text-base">
                     File Mitra
                   </div>
-                  <div className="text-[10px] leading-tight text-slate-400 sm:text-xs">
+                  <div className="truncate text-[10px] leading-tight text-slate-400 sm:text-xs">
                     Premium file utility suite
                   </div>
                 </div>
               </Link>
+
+              <button
+                type="button"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-slate-200 transition hover:bg-white/10 hover:text-white md:hidden"
+                aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+                aria-expanded={mobileNavOpen}
+                aria-controls="primary-mobile-nav"
+                onClick={() => setMobileNavOpen((o) => !o)}
+              >
+                {mobileNavOpen ? (
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
+                  </svg>
+                )}
+              </button>
             </div>
 
             <nav
               className={clsx(
-                "premium-nav-pill relative w-full min-w-0 rounded-2xl p-1",
-                "grid grid-cols-3 gap-x-0.5 gap-y-2 px-1 py-2 place-items-stretch",
-                "sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:justify-center sm:gap-2 sm:rounded-full sm:p-1.5 sm:py-1.5 md:w-auto md:flex-nowrap md:justify-end"
+                "premium-nav-pill relative hidden w-full min-w-0 md:flex",
+                "flex-row flex-wrap items-center justify-center gap-2 rounded-full p-1.5 md:w-auto md:flex-nowrap md:justify-end"
               )}
             >
               <NavLink to="/" label="Home" />
@@ -158,20 +218,16 @@ function RootLayout() {
               <ResumeNavLink />
               <QrNavLink />
 
-              {/* Mobile: static → dropdown anchors to full nav width. md+: relative → under Tools. */}
-              <div
-                ref={dropdownRef}
-                className="max-sm:flex max-sm:w-full max-sm:min-w-0 max-sm:flex-col max-md:static md:relative md:shrink-0"
-              >
+              <div ref={dropdownRef} className="relative shrink-0">
                 <button
                   type="button"
                   onClick={() => setToolsOpen((prev) => !prev)}
-                  className="nav-mag-link w-full cursor-pointer list-none rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
+                  className="nav-mag-link cursor-pointer list-none rounded-full px-2.5 py-1.5 text-center text-xs sm:px-3 sm:py-2 sm:text-sm"
                 >
                   Tools
                 </button>
                 <div
-                  className={`premium-dropdown premium-dropdown-panel absolute z-40 mt-1 max-md:inset-x-1 max-md:top-full max-md:min-w-0 md:right-0 md:top-full md:w-64 ${
+                  className={`premium-dropdown premium-dropdown-panel absolute right-0 top-full z-40 mt-1 w-64 min-w-0 ${
                     toolsOpen ? "premium-dropdown-open" : ""
                   } `}
                 >
@@ -180,41 +236,41 @@ function RootLayout() {
                       Tool Hubs
                     </div>
                     <div className="grid min-w-0 gap-1">
-                    <Link
-                      to="/image-tools"
-                      onClick={() => setToolsOpen(false)}
-                      className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
-                    >
-                      Image Tools (Convert + Compress)
-                    </Link>
-                    <Link
-                      to="/pdf-tools"
-                      onClick={() => setToolsOpen(false)}
-                      className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
-                    >
-                      PDF Tools (Convert + Compress + Merge)
-                    </Link>
-                    <Link
-                      to="/ocr"
-                      onClick={() => setToolsOpen(false)}
-                      className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
-                    >
-                      OCR Extractor
-                    </Link>
-                    <Link
-                      to="/qr-code"
-                      onClick={() => setToolsOpen(false)}
-                      className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
-                    >
-                      QR Code Generator
-                    </Link>
-                    <Link
-                      to="/resume"
-                      onClick={() => setToolsOpen(false)}
-                      className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
-                    >
-                      Resume Studio
-                    </Link>
+                      <Link
+                        to="/image-tools"
+                        onClick={() => setToolsOpen(false)}
+                        className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
+                      >
+                        Image Tools (Convert + Compress)
+                      </Link>
+                      <Link
+                        to="/pdf-tools"
+                        onClick={() => setToolsOpen(false)}
+                        className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
+                      >
+                        PDF Tools (Convert + Compress + Merge)
+                      </Link>
+                      <Link
+                        to="/ocr"
+                        onClick={() => setToolsOpen(false)}
+                        className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
+                      >
+                        OCR Extractor
+                      </Link>
+                      <Link
+                        to="/qr-code"
+                        onClick={() => setToolsOpen(false)}
+                        className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
+                      >
+                        QR Code Generator
+                      </Link>
+                      <Link
+                        to="/resume"
+                        onClick={() => setToolsOpen(false)}
+                        className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
+                      >
+                        Resume Studio
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -225,6 +281,44 @@ function RootLayout() {
               <NavLink to="/privacy-policy" label="Privacy" />
               <NavLink to="/terms" label="Terms" />
             </nav>
+          </div>
+
+          <div
+            id="primary-mobile-nav"
+            className={clsx(
+              "md:hidden overflow-hidden border-t border-white/10 transition-[max-height,opacity] duration-300 ease-out",
+              mobileNavOpen
+                ? "max-h-[min(72vh,28rem)] opacity-100"
+                : "pointer-events-none max-h-0 border-transparent opacity-0"
+            )}
+          >
+            <div className="app-shell premium-nav-wrap mt-2 flex max-h-[min(68vh,26rem)] flex-col gap-1 overflow-y-auto rounded-2xl p-2">
+              <NavLink to="/" label="Home" onPick={closeAllNav} className={sheetLink} />
+              <NavLink to="/blog" label="Blog" onPick={closeAllNav} className={sheetLink} />
+              <ResumeNavLink onPick={closeAllNav} className="!rounded-xl" />
+              <QrNavLink onPick={closeAllNav} className="!rounded-xl" />
+              <div className="px-2 pb-0.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+                Tool hubs
+              </div>
+              <NavLink
+                to="/image-tools"
+                label="Image Tools (convert + compress)"
+                onPick={closeAllNav}
+                className={sheetLink}
+              />
+              <NavLink
+                to="/pdf-tools"
+                label="PDF Tools (convert + compress + merge)"
+                onPick={closeAllNav}
+                className={sheetLink}
+              />
+              <NavLink to="/ocr" label="OCR Extractor" onPick={closeAllNav} className={sheetLink} />
+              <div className="my-1 border-t border-white/10" />
+              <NavLink to="/about" label="About" onPick={closeAllNav} className={sheetLink} />
+              <NavLink to="/contact" label="Contact" onPick={closeAllNav} className={sheetLink} />
+              <NavLink to="/privacy-policy" label="Privacy" onPick={closeAllNav} className={sheetLink} />
+              <NavLink to="/terms" label="Terms" onPick={closeAllNav} className={sheetLink} />
+            </div>
           </div>
         </header>
 

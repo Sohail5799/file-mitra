@@ -22,11 +22,18 @@ function PixelCarousel(props: { active: number; itemCount: number; children: Rea
   useLayoutEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
-    const measure = () => setSlidePx(el.getBoundingClientRect().width);
+    const measure = () => {
+      const w = Math.round(el.getBoundingClientRect().width);
+      if (w > 0) setSlidePx(w);
+    };
     measure();
+    const raf = requestAnimationFrame(() => measure());
     const ro = new ResizeObserver(measure);
     ro.observe(el);
-    return () => ro.disconnect();
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
   }, []);
 
   const { active, itemCount } = props;
@@ -37,7 +44,7 @@ function PixelCarousel(props: { active: number; itemCount: number; children: Rea
   const pctShift = (active * 100) / itemCount;
 
   return (
-    <div ref={viewportRef} className="min-w-0 w-full overflow-x-hidden">
+    <div ref={viewportRef} className="min-w-0 w-full max-w-full overflow-x-hidden">
       <div
         className="flex transition-transform duration-500 ease-out will-change-transform motion-reduce:transform-none motion-reduce:transition-none"
         style={{
@@ -214,8 +221,8 @@ export function HomePage() {
   return (
     <div className="space-y-6">
       <Section className="premium-hero">
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
+        <div className="grid min-w-0 gap-4 md:grid-cols-2">
+          <div className="min-w-0">
             <p className="text-sm font-medium tracking-wide text-slate-400">
               One-click premium file workflows
             </p>
@@ -242,14 +249,14 @@ export function HomePage() {
             </div>
           </div>
 
-          <div className="surface-muted p-4">
+          <div className="surface-muted min-w-0 p-4">
             <div className="pl-0.5 pt-0.5 text-xs uppercase tracking-wide text-slate-400">
               Tools carousel
             </div>
-            <div className="relative mt-3 overflow-hidden rounded-xl border border-white/10 bg-black/20 p-4">
+            <div className="relative mt-3 min-w-0 max-w-full overflow-hidden rounded-xl border border-white/10 bg-black/20 p-4">
               <PixelCarousel active={activeTool} itemCount={tools.length}>
                 {tools.map((tool) => (
-                  <div key={tool.title}>
+                  <div key={tool.title} className="min-w-0 pr-1">
                     <div className="text-lg font-semibold text-white">{tool.title}</div>
                     <p className="mt-1 text-sm text-slate-300">{tool.desc}</p>
                     <Link to={tool.to} className="btn-secondary mt-4">
@@ -334,10 +341,10 @@ export function HomePage() {
       </div>
 
       <Section title="User Reviews" description="What teams say about this tool.">
-        <div className="relative overflow-hidden">
+        <div className="relative min-w-0 max-w-full overflow-hidden">
           <PixelCarousel active={activeReview} itemCount={reviews.length}>
             {reviews.map((item) => (
-              <div key={item.company} className="surface-muted p-5">
+              <div key={item.company} className="surface-muted min-w-0 p-5 pr-1 sm:pr-5">
                 <div className="flex items-center gap-3">
                   <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/10 text-sm font-semibold text-white">
                     {item.logo}
