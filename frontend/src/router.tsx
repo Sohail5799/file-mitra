@@ -8,7 +8,7 @@ import {
   useRouterState
 } from "@tanstack/react-router";
 import clsx from "clsx";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { applyRouteSeo } from "./lib/routeSeo";
 import { HomePage } from "./views/HomePage";
 import { ImageToJpegPage } from "./views/ImageToJpegPage";
@@ -21,20 +21,24 @@ import { OcrPage } from "./views/OcrPage";
 import { AboutPage } from "./views/AboutPage";
 import { ContactPage } from "./views/ContactPage";
 import { PrivacyPolicyPage } from "./views/PrivacyPolicyPage";
+import { TermsAndConditionsPage } from "./views/TermsAndConditionsPage";
 import { ImageToolsPage } from "./views/ImageToolsPage";
 import { PdfToolsPage } from "./views/PdfToolsPage";
 import { BlogIndexPage } from "./views/BlogIndexPage";
 import { BlogPostPage } from "./views/BlogPostPage";
-import { ResumeBuilderPage } from "./views/resume/ResumeBuilderPage";
+const QrCodePage = lazy(() => import("./views/QrCodePage").then((m) => ({ default: m.QrCodePage })));
+const ResumeBuilderPage = lazy(() =>
+  import("./views/resume/ResumeBuilderPage").then((m) => ({ default: m.ResumeBuilderPage }))
+);
 
 function NavLink(props: { to: string; label: string }) {
   return (
     <Link
       to={props.to}
-      className="flex min-w-0 shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs text-slate-300 transition hover:bg-white/10 hover:text-white max-sm:w-full sm:px-3 sm:py-2 sm:text-sm"
+      className="nav-mag-link flex min-w-0 shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs max-sm:w-full sm:px-3 sm:py-2 sm:text-sm"
       activeProps={{
         className:
-          "flex min-w-0 shrink-0 items-center justify-center rounded-full bg-white/90 px-2.5 py-1.5 text-center text-xs text-slate-950 shadow max-sm:w-full sm:px-3 sm:py-2 sm:text-sm"
+          "nav-mag-link nav-mag-link--active flex min-w-0 shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs max-sm:w-full sm:px-3 sm:py-2 sm:text-sm"
       }}
     >
       {props.label}
@@ -56,9 +60,33 @@ function ResumeNavLink() {
         )
       }}
     >
-      <span className="resume-nav-cta__shine pointer-events-none absolute inset-0 opacity-40" aria-hidden />
-      <span className="relative z-[1] font-semibold tracking-wide text-indigo-50 drop-shadow-sm group-hover:text-white">
+      <span className="resume-nav-cta__glow pointer-events-none absolute inset-0 rounded-full" aria-hidden />
+      <span className="resume-nav-cta__shine pointer-events-none absolute inset-0" aria-hidden />
+      <span className="relative z-[1] font-semibold tracking-wide text-slate-100 transition-colors duration-300 group-hover:text-white">
         Resume
+      </span>
+    </Link>
+  );
+}
+
+/** QR CTA in navbar (visible outside Tools dropdown). */
+function QrNavLink() {
+  return (
+    <Link
+      to="/qr-code"
+      className={clsx(
+        "qr-nav-cta group relative flex w-full shrink-0 items-center justify-center overflow-hidden rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
+      )}
+      activeProps={{
+        className: clsx(
+          "qr-nav-cta-active flex w-full shrink-0 items-center justify-center rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
+        )
+      }}
+    >
+      <span className="qr-nav-cta__glow pointer-events-none absolute inset-0 rounded-full" aria-hidden />
+      <span className="qr-nav-cta__shine pointer-events-none absolute inset-0" aria-hidden />
+      <span className="relative z-[1] font-semibold tracking-wide text-slate-100 transition-colors duration-300 group-hover:text-white">
+        QR
       </span>
     </Link>
   );
@@ -128,6 +156,7 @@ function RootLayout() {
               <NavLink to="/" label="Home" />
               <NavLink to="/blog" label="Blog" />
               <ResumeNavLink />
+              <QrNavLink />
 
               {/* Mobile: static → dropdown anchors to full nav width. md+: relative → under Tools. */}
               <div
@@ -137,7 +166,7 @@ function RootLayout() {
                 <button
                   type="button"
                   onClick={() => setToolsOpen((prev) => !prev)}
-                  className="w-full cursor-pointer list-none rounded-full px-2.5 py-1.5 text-center text-xs text-slate-300 transition hover:bg-white/10 hover:text-white sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
+                  className="nav-mag-link w-full cursor-pointer list-none rounded-full px-2.5 py-1.5 text-center text-xs sm:w-auto sm:px-3 sm:py-2 sm:text-sm"
                 >
                   Tools
                 </button>
@@ -146,51 +175,55 @@ function RootLayout() {
                     toolsOpen ? "premium-dropdown-open" : ""
                   } `}
                 >
-                  <div className="mb-2 px-2 text-[10px] uppercase tracking-[0.18em] text-slate-400 sm:text-[11px] sm:tracking-[0.2em]">
-                    Tool Hubs
-                  </div>
-                  <div className="grid min-w-0 gap-0.5">
+                  <div className="px-3 pb-2 pt-3 sm:px-4 sm:pb-3 sm:pt-3.5">
+                    <div className="mb-3 pl-0.5 text-[10px] uppercase tracking-[0.18em] text-slate-400 sm:mb-3.5 sm:text-[11px] sm:tracking-[0.2em]">
+                      Tool Hubs
+                    </div>
+                    <div className="grid min-w-0 gap-1">
                     <Link
                       to="/image-tools"
                       onClick={() => setToolsOpen(false)}
-                      className="break-words rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                      className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
                     >
                       Image Tools (Convert + Compress)
                     </Link>
                     <Link
                       to="/pdf-tools"
                       onClick={() => setToolsOpen(false)}
-                      className="break-words rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                      className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
                     >
                       PDF Tools (Convert + Compress + Merge)
                     </Link>
                     <Link
                       to="/ocr"
                       onClick={() => setToolsOpen(false)}
-                      className="break-words rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                      className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
                     >
                       OCR Extractor
                     </Link>
                     <Link
-                      to="/blog"
+                      to="/qr-code"
                       onClick={() => setToolsOpen(false)}
-                      className="break-words rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                      className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
                     >
-                      Blog & guides
+                      QR Code Generator
                     </Link>
                     <Link
                       to="/resume"
                       onClick={() => setToolsOpen(false)}
-                      className="break-words rounded-xl px-2.5 py-2 text-left text-xs leading-snug text-slate-200 transition hover:bg-white/10 hover:text-white sm:rounded-full sm:px-3 sm:text-sm"
+                      className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
                     >
                       Resume Studio
                     </Link>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <NavLink to="/about" label="About" />
               <NavLink to="/contact" label="Contact" />
+              <NavLink to="/privacy-policy" label="Privacy" />
+              <NavLink to="/terms" label="Terms" />
             </nav>
           </div>
         </header>
@@ -202,12 +235,25 @@ function RootLayout() {
         <footer className="mt-12 border-t border-white/10 pt-6">
           <div className="flex flex-col gap-3 text-xs text-slate-400 md:flex-row md:items-center md:justify-between">
             <div>Fast, private, and simple.</div>
-            <div className="flex flex-wrap items-center gap-3">
-              <Link to="/resume" className="hover:text-white">Resume</Link>
-              <Link to="/blog" className="hover:text-white">Blog</Link>
-              <Link to="/about" className="hover:text-white">About</Link>
-              <Link to="/contact" className="hover:text-white">Contact</Link>
-              <Link to="/privacy-policy" className="hover:text-white">Privacy</Link>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <Link to="/resume" className="hover:text-white">
+                Resume
+              </Link>
+              <Link to="/blog" className="hover:text-white">
+                Blog
+              </Link>
+              <Link to="/about" className="hover:text-white">
+                About
+              </Link>
+              <Link to="/contact" className="hover:text-white">
+                Contact
+              </Link>
+              <Link to="/privacy-policy" className="hover:text-white">
+                Privacy
+              </Link>
+              <Link to="/terms" className="hover:text-white">
+                Terms
+              </Link>
             </div>
           </div>
         </footer>
@@ -268,6 +314,12 @@ const ocrRoute = new Route({
   component: OcrPage
 });
 
+const qrCodeRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/qr-code",
+  component: QrCodePage
+});
+
 const aboutRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/about",
@@ -284,6 +336,12 @@ const privacyPolicyRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/privacy-policy",
   component: PrivacyPolicyPage
+});
+
+const termsRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/terms",
+  component: TermsAndConditionsPage
 });
 
 const imageToolsRoute = new Route({
@@ -327,9 +385,11 @@ const routeTree = rootRoute.addChildren([
   pdfCompressorRoute,
   pdfMergeRoute,
   ocrRoute,
+  qrCodeRoute,
   aboutRoute,
   contactRoute,
   privacyPolicyRoute,
+  termsRoute,
   blogIndexRoute,
   blogPostRoute,
   resumeRoute
@@ -344,6 +404,16 @@ declare module "@tanstack/react-router" {
 }
 
 export function AppRouter() {
-  return <RouterProvider router={router} />;
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[50vh] items-center justify-center text-sm text-slate-400">
+          Loading…
+        </div>
+      }
+    >
+      <RouterProvider router={router} />
+    </Suspense>
+  );
 }
 

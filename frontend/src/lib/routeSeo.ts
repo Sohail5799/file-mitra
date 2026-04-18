@@ -69,6 +69,12 @@ const ROUTES: Record<string, RouteSeo> = {
       "Pull plain text, PDF, or Word output from scans and documents with language-aware OCR — handy for digitizing paperwork.",
     keywords: "OCR online free, image to text, PDF OCR, extract text from scan, Tesseract OCR"
   },
+  "/qr-code": {
+    title: `QR Code generator — custom link QR & PNG download | ${SITE_NAME}`,
+    description:
+      "Create a scannable QR code from any https link with validation, live preview, optional label, dot and corner styles, colors, and error correction — download PNG in one click.",
+    keywords: "QR code generator online, free QR from URL, custom QR code, QR PNG download"
+  },
   "/about": {
     title: `About ${SITE_NAME} — mission & tools`,
     description:
@@ -86,6 +92,12 @@ const ROUTES: Record<string, RouteSeo> = {
     description:
       "How File Mitra handles your files and data: processing for conversions, no unnecessary retention, and practical privacy practices.",
     keywords: "File Mitra privacy, data policy, file processing privacy"
+  },
+  "/terms": {
+    title: `Terms and conditions | ${SITE_NAME}`,
+    description:
+      "Rules for using File Mitra: acceptable use, no warranties, liability limits, and how to contact us about legal questions.",
+    keywords: "File Mitra terms, terms of use, conditions, legal"
   },
   "/blog": {
     title: `${SITE_NAME} Blog — guides on PDF & image workflows`,

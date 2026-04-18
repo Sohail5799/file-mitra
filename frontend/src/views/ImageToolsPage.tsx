@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { Card } from "../ui/Card";
 import { Section } from "../ui/Section";
@@ -109,6 +110,16 @@ export function ImageToolsPage() {
           >
             {compressor.isPending ? "Compressing..." : "Compress & Download"}
           </button>
+        </Card>
+
+        <Card
+          title="QR Code Generator"
+          description="Turn any valid web link into a customizable QR code with preview and PNG download."
+          className="md:col-span-2"
+        >
+          <Link to="/qr-code" className="btn-secondary inline-flex">
+            Open QR generator
+          </Link>
         </Card>
       </div>
     </Section>

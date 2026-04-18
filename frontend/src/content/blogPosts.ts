@@ -17,6 +17,55 @@ export type BlogPost = {
 
 const posts: BlogPost[] = [
   {
+    slug: "create-custom-qr-codes-for-links-with-badges",
+    title: "Create custom QR codes for links (with badges) in minutes",
+    excerpt:
+      "A practical walkthrough for generating clean, scannable QR codes with custom colors, corner styles, and a badge for branding.",
+    date: "2026-04-16",
+    readMin: 7,
+    keywords:
+      "QR code generator, custom QR code, branded QR, QR with label badge, QR code PNG download",
+    sections: [
+      {
+        type: "p",
+        text: "QR codes work best when they are both scannable and recognizable. A plain black square works, but adding a small badge and brand colors can improve trust on menus, flyers, and checkout pages—as long as contrast stays strong."
+      },
+      {
+        type: "h2",
+        text: "Start with a valid destination link"
+      },
+      {
+        type: "p",
+        text: "Before styling, confirm your final URL. Use full http(s) links, avoid temporary redirects, and test the link on mobile data as well as Wi-Fi. Broken destinations make even perfect-looking QR codes useless."
+      },
+      {
+        type: "h2",
+        text: "Customize without hurting scan reliability"
+      },
+      {
+        type: "ul",
+        items: [
+          "Keep foreground and background contrast high (dark code on light background is safest).",
+          "Use medium or high error correction when adding visual customization.",
+          "Keep badge text short so it does not overpower the code area.",
+          "Leave quiet zone (margin) around the code so scanners detect edges quickly."
+        ]
+      },
+      {
+        type: "h2",
+        text: "Where branded QR helps most"
+      },
+      {
+        type: "p",
+        text: "Restaurants can use badges like “Scan Menu,” stores can use “Pay Here,” and creators can use campaign tags to separate links by channel. Export PNG once, then reuse in posters, story highlights, and packaging."
+      },
+      {
+        type: "callout",
+        text: "After export, always test with at least two different phones. If scan feels slow, increase contrast, reduce badge size, or raise error correction."
+      }
+    ]
+  },
+  {
     slug: "ats-friendly-resume-bullets-recruiters-actually-read",
     title: "ATS-friendly resume bullets recruiters actually read",
     excerpt:
