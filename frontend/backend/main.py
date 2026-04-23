@@ -58,11 +58,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 generated_images_dir = ensure_generated_images_dir(_BACKEND_DIR)
-try:
-    image_provider = build_image_provider()
-except RuntimeError as exc:
-    logger.warning("Image provider not initialized at startup: %s", exc)
-    image_provider = None
 
 _cors_raw = os.environ.get("CORS_ALLOW_ORIGINS", "*").strip()
 _cors_origins = [o.strip() for o in _cors_raw.split(",") if o.strip()] or ["*"]
@@ -214,6 +209,18 @@ class IpRateLimiter:
 
 
 rate_limiter = IpRateLimiter(max_requests=5, window_seconds=60)
+
+
+def _reload_ai_env() -> None:
+    # Never override platform env vars (e.g. Railway secrets).
+    # Load from .env only as a fallback for local development.
+    for path in (
+        os.path.join(_REPO_ROOT, ".env"),
+        os.path.join(_FRONTEND_ROOT, ".env"),
+        os.path.join(_BACKEND_DIR, ".env"),
+    ):
+        if os.path.isfile(path):
+            load_dotenv(path, override=False)
 
 
 def _env(key: str, default: str = "") -> str:
@@ -720,12 +727,11 @@ async def generate_image(payload: ImageGenerationRequest, request: Request):
     if not cleaned_prompt:
         raise HTTPException(status_code=400, detail="Prompt is required.")
 
-    provider = image_provider
-    if provider is None:
-        try:
-            provider = build_image_provider()
-        except RuntimeError as exc:
-            raise HTTPException(status_code=503, detail=str(exc)) from exc
+    _reload_ai_env()
+    try:
+        provider = build_image_provider()
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     logger.info("Image generation request received from ip=%s", client_ip)
     image_bytes = await provider.generate_image(cleaned_prompt)
