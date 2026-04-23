@@ -38,4 +38,21 @@ Frontend Vite proxy already points `/api` to `http://127.0.0.1:8000`.
 - `POST /api/compress/pdf`
 - `POST /api/pdf/convert`
 - `POST /api/ocr/extract`
+- `POST /generate-image`
+
+## Cloudflare Workers AI Image Generation
+
+- Model used: `@cf/stabilityai/stable-diffusion-xl-base-1.0`
+- Endpoint: `https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/run/@cf/stabilityai/stable-diffusion-xl-base-1.0`
+- Saves generated images to local `generated_images/`
+
+Required env vars:
+
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
+
+Optional env vars:
+
+- `IMAGE_PROVIDER=cloudflare`
+- `CLOUDFLARE_TIMEOUT_SECONDS=45`
 

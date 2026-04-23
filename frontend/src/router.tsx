@@ -26,6 +26,7 @@ import { ImageToolsPage } from "./views/ImageToolsPage";
 import { PdfToolsPage } from "./views/PdfToolsPage";
 import { BlogIndexPage } from "./views/BlogIndexPage";
 import { BlogPostPage } from "./views/BlogPostPage";
+import { AiImageGeneratorPage } from "./views/AiImageGeneratorPage";
 const QrCodePage = lazy(() => import("./views/QrCodePage").then((m) => ({ default: m.QrCodePage })));
 const ResumeBuilderPage = lazy(() =>
   import("./views/resume/ResumeBuilderPage").then((m) => ({ default: m.ResumeBuilderPage }))
@@ -258,6 +259,13 @@ function RootLayout() {
                         OCR Extractor
                       </Link>
                       <Link
+                        to="/ai-image-generator"
+                        onClick={() => setToolsOpen(false)}
+                        className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
+                      >
+                        AI Image Generator
+                      </Link>
+                      <Link
                         to="/qr-code"
                         onClick={() => setToolsOpen(false)}
                         className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
@@ -313,6 +321,7 @@ function RootLayout() {
                 className={sheetLink}
               />
               <NavLink to="/ocr" label="OCR Extractor" onPick={closeAllNav} className={sheetLink} />
+              <NavLink to="/ai-image-generator" label="AI Image Generator" onPick={closeAllNav} className={sheetLink} />
               <div className="my-1 border-t border-white/10" />
               <NavLink to="/about" label="About" onPick={closeAllNav} className={sheetLink} />
               <NavLink to="/contact" label="Contact" onPick={closeAllNav} className={sheetLink} />
@@ -462,6 +471,12 @@ const blogPostRoute = new Route({
   component: BlogPostPage
 });
 
+const aiImageGeneratorRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/ai-image-generator",
+  component: AiImageGeneratorPage
+});
+
 const resumeRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/resume",
@@ -486,6 +501,7 @@ const routeTree = rootRoute.addChildren([
   termsRoute,
   blogIndexRoute,
   blogPostRoute,
+  aiImageGeneratorRoute,
   resumeRoute
 ]);
 

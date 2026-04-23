@@ -74,7 +74,8 @@ type FooterIconId =
   | "pdfConvert"
   | "pdfCompress"
   | "merge"
-  | "ocr";
+  | "ocr"
+  | "aiImage";
 
 const FOOTER_TOOL_LINKS: readonly { label: string; to: string; icon: FooterIconId }[] = [
   { label: "Resume Studio", to: "/resume", icon: "resume" },
@@ -84,7 +85,8 @@ const FOOTER_TOOL_LINKS: readonly { label: string; to: string; icon: FooterIconI
   { label: "PDF to Excel/Doc", to: "/pdf-convert", icon: "pdfConvert" },
   { label: "PDF Compressor", to: "/pdf-compressor", icon: "pdfCompress" },
   { label: "Merge PDF", to: "/pdf-merge", icon: "merge" },
-  { label: "OCR Extractor", to: "/ocr", icon: "ocr" }
+  { label: "OCR Extractor", to: "/ocr", icon: "ocr" },
+  { label: "AI Image Generator", to: "/ai-image-generator", icon: "aiImage" }
 ];
 
 function FooterToolGlyph({ id, className = "h-5 w-5" }: { id: FooterIconId; className?: string }) {
@@ -139,6 +141,12 @@ function FooterToolGlyph({ id, className = "h-5 w-5" }: { id: FooterIconId; clas
           <path d="M3.75 4.5v15m0-15h4.5m-4.5 0L9 9m-5.25-4.5L9 9m-5.25 4.5L9 15m-5.25-4.5h4.5m9-6v15m0-15h4.5m-4.5 0L15 9m5.25-4.5L15 9m5.25 4.5L15 15m5.25-4.5h-4.5" />
         </svg>
       );
+    case "aiImage":
+      return (
+        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden {...stroke}>
+          <path d="M12 3l2.25 4.5L19.5 9l-3.75 3.75L16.5 18 12 15.75 7.5 18l.75-5.25L4.5 9l5.25-1.5L12 3z" />
+        </svg>
+      );
     default:
       return null;
   }
@@ -151,6 +159,11 @@ export function HomePage() {
         { title: "Image Tools", desc: "Convert and compress images in one place.", to: "/image-tools" },
         { title: "PDF Tools", desc: "Convert, compress and merge PDFs from one dashboard.", to: "/pdf-tools" },
         { title: "OCR Extractor", desc: "Extract text from images and PDFs.", to: "/ocr" },
+        {
+          title: "AI Image Generator",
+          desc: "Type Hinglish prompt and generate AI art using free AI Horde.",
+          to: "/ai-image-generator"
+        },
         {
           title: "QR Generator",
           desc: "Create customizable QR codes from links with instant preview.",
@@ -245,6 +258,9 @@ export function HomePage() {
               </Link>
               <Link to="/qr-code" className="btn-secondary w-full justify-center min-[400px]:w-auto">
                 QR Generator
+              </Link>
+              <Link to="/ai-image-generator" className="btn-secondary w-full justify-center min-[400px]:w-auto">
+                AI Image Generator
               </Link>
             </div>
           </div>

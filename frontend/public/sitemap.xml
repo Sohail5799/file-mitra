@@ -10,8 +10,10 @@
   <url><loc>https://file-mitra.vercel.app/pdf-compressor</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
   <url><loc>https://file-mitra.vercel.app/pdf-merge</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
   <url><loc>https://file-mitra.vercel.app/ocr</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://file-mitra.vercel.app/ai-image-generator</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
   <url><loc>https://file-mitra.vercel.app/resume</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://file-mitra.vercel.app/blog</loc><changefreq>weekly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://file-mitra.vercel.app/blog/free-ai-image-generator-hinglish-prompt-guide</loc><changefreq>monthly</changefreq><priority>0.68</priority></url>
   <url><loc>https://file-mitra.vercel.app/blog/ats-friendly-resume-bullets-recruiters-actually-read</loc><changefreq>monthly</changefreq><priority>0.68</priority></url>
   <url><loc>https://file-mitra.vercel.app/blog/one-page-vs-two-page-resume-when-length-matters</loc><changefreq>monthly</changefreq><priority>0.68</priority></url>
   <url><loc>https://file-mitra.vercel.app/blog/jpeg-vs-png-vs-webp-choosing-image-format</loc><changefreq>monthly</changefreq><priority>0.65</priority></url>

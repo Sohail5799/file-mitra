@@ -106,6 +106,13 @@ const ROUTES: Record<string, RouteSeo> = {
     keywords:
       "File Mitra blog, PDF tips, image compression guide, OCR guide, merge PDF tutorial, PDF to Excel help, file converter FAQ"
   },
+  "/ai-image-generator": {
+    title: `Free AI image generator from Hinglish prompts | ${SITE_NAME}`,
+    description:
+      "Type a Hinglish or English prompt and generate AI images for free using AI Horde. No paid API and no local model setup needed.",
+    keywords:
+      "free AI image generator, hinglish prompt to image, AI Horde image API, text to image online free, prompt to art tool"
+  },
   "/resume": {
     title: `Free resume builder — ATS-friendly CV & print PDF | ${SITE_NAME}`,
     description:

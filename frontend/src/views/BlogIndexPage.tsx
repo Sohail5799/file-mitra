@@ -49,6 +49,15 @@ export function BlogIndexPage() {
             and anyone who wants fewer surprises in exported files. Share feedback from the contact page if you want a
             topic covered next.
           </p>
+          <div className="mt-4 rounded-2xl border border-indigo-300/20 bg-indigo-500/10 p-4">
+            <p className="text-sm text-indigo-100">
+              New: Hinglish prompt se free AI image banani hai? Try our{" "}
+              <Link to="/ai-image-generator" className="font-semibold text-white underline-offset-2 hover:underline">
+                AI Image Generator
+              </Link>
+              .
+            </p>
+          </div>
         </Section>
 
         <section aria-labelledby="blog-posts-heading">

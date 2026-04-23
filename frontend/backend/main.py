@@ -2,9 +2,14 @@ from __future__ import annotations
 
 import html
 import io
+import logging
 import os
 import smtplib
 import ssl
+import sys
+import time
+import uuid
+from collections import defaultdict, deque
 from email.message import EmailMessage
 from email.utils import formataddr
 from typing import Literal
@@ -14,7 +19,7 @@ import fitz
 import pytesseract
 from docx import Document
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -26,6 +31,16 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 from pypdf import PdfReader, PdfWriter
 
 _BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
+if _BACKEND_DIR not in sys.path:
+    sys.path.insert(0, _BACKEND_DIR)
+
+from services.cloudflare_ai import (
+    GENERATED_IMAGES_DIR,
+    build_image_provider,
+    ensure_generated_images_dir,
+)
+from utils.prompt_enhancer import enhance_prompt
+
 _FRONTEND_ROOT = os.path.dirname(_BACKEND_DIR)
 _REPO_ROOT = os.path.dirname(_FRONTEND_ROOT)
 for _dotenv_path in (
@@ -37,6 +52,17 @@ for _dotenv_path in (
         load_dotenv(_dotenv_path, override=False)
 
 app = FastAPI(title="Converter Backend", version="1.0.0")
+logging.basicConfig(
+    level=os.environ.get("LOG_LEVEL", "INFO").upper(),
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+)
+logger = logging.getLogger(__name__)
+generated_images_dir = ensure_generated_images_dir(_BACKEND_DIR)
+try:
+    image_provider = build_image_provider()
+except RuntimeError as exc:
+    logger.warning("Image provider not initialized at startup: %s", exc)
+    image_provider = None
 
 _cors_raw = os.environ.get("CORS_ALLOW_ORIGINS", "*").strip()
 _cors_origins = [o.strip() for o in _cors_raw.split(",") if o.strip()] or ["*"]
@@ -46,6 +72,11 @@ app.add_middleware(
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+app.mount(
+    f"/{GENERATED_IMAGES_DIR}",
+    StaticFiles(directory=str(generated_images_dir)),
+    name="generated_images",
 )
 
 
@@ -145,6 +176,44 @@ class ContactPayload(BaseModel):
     @classmethod
     def _strip_email(cls, v: object) -> object:
         return v.strip() if isinstance(v, str) else v
+
+
+class ImageGenerationRequest(BaseModel):
+    prompt: str = Field(min_length=5, max_length=700)
+
+    @field_validator("prompt", mode="before")
+    @classmethod
+    def _strip_prompt(cls, v: object) -> object:
+        return v.strip() if isinstance(v, str) else v
+
+
+class ImageGenerationResponse(BaseModel):
+    message: str
+    image_url: str
+
+
+class IpRateLimiter:
+    def __init__(self, *, max_requests: int, window_seconds: int) -> None:
+        self.max_requests = max_requests
+        self.window_seconds = window_seconds
+        self._hits: dict[str, deque[float]] = defaultdict(deque)
+
+    def check(self, client_ip: str) -> None:
+        now = time.time()
+        bucket = self._hits[client_ip]
+        cutoff = now - self.window_seconds
+        while bucket and bucket[0] < cutoff:
+            bucket.popleft()
+
+        if len(bucket) >= self.max_requests:
+            raise HTTPException(
+                status_code=429,
+                detail="Rate limit exceeded. Max 5 requests per minute.",
+            )
+        bucket.append(now)
+
+
+rate_limiter = IpRateLimiter(max_requests=5, window_seconds=60)
 
 
 def _env(key: str, default: str = "") -> str:
@@ -632,6 +701,42 @@ def ocr_extract(
     pdf_doc.save(out)
     pdf_doc.close()
     return _stream_bytes(out.getvalue(), "ocr-output.pdf", "application/pdf")
+
+
+@app.post("/generate-image", response_model=ImageGenerationResponse)
+async def generate_image(payload: ImageGenerationRequest, request: Request):
+    client_ip = (
+        (request.headers.get("x-forwarded-for", "").split(",")[0].strip())
+        or (request.client.host if request.client else "")
+        or "unknown"
+    )
+    rate_limiter.check(client_ip)
+
+    if payload.prompt.count("\n") > 25:
+        raise HTTPException(status_code=400, detail="Prompt format looks abusive. Keep it concise.")
+
+    cleaned_prompt = enhance_prompt(payload.prompt)
+    if not cleaned_prompt:
+        raise HTTPException(status_code=400, detail="Prompt is required.")
+
+    provider = image_provider
+    if provider is None:
+        try:
+            provider = build_image_provider()
+        except RuntimeError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    logger.info("Image generation request received from ip=%s", client_ip)
+    image_bytes = await provider.generate_image(cleaned_prompt)
+    filename = f"{uuid.uuid4().hex}.png"
+    output_path = generated_images_dir / filename
+    output_path.write_bytes(image_bytes)
+    image_url = f"{GENERATED_IMAGES_DIR}/{filename}"
+
+    return ImageGenerationResponse(
+        message="Ye raha tera generated image bhai 🔥",
+        image_url=image_url,
+    )
 
 
 # backend/main.py → parent dir is frontend app root (where package.json / dist/ live)
