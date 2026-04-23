@@ -704,6 +704,7 @@ def ocr_extract(
 
 
 @app.post("/generate-image", response_model=ImageGenerationResponse)
+@app.post("/api/generate-image", response_model=ImageGenerationResponse)
 async def generate_image(payload: ImageGenerationRequest, request: Request):
     client_ip = (
         (request.headers.get("x-forwarded-for", "").split(",")[0].strip())

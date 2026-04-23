@@ -238,7 +238,7 @@ export async function generateImageFromPrompt(params: {
 
   let res: Response;
   try {
-    res = await fetch(apiUrl("/generate-image"), {
+    res = await fetch(apiUrl("/api/generate-image"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: params.prompt }),
@@ -247,7 +247,7 @@ export async function generateImageFromPrompt(params: {
   } catch (e: unknown) {
     if (e instanceof Error && e.name === "AbortError") {
       throw new Error(
-        `Image generation timed out after ${IMAGE_GEN_TIMEOUT_MS / 1000}s. AI Horde queue busy ho sakti hai, please retry.`
+        `Image generation timed out after ${IMAGE_GEN_TIMEOUT_MS / 1000}s. Please retry.`
       );
     }
     throw e;
