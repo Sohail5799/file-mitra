@@ -11,8 +11,6 @@ import { Link } from "@tanstack/react-router";
 import { Card } from "../ui/Card";
 import { Section } from "../ui/Section";
 
-const STATS_FMT = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
-
 /** Measured slide width in px — avoids %-flex rounding peek of adjacent slides. */
 function PixelCarousel(props: { active: number; itemCount: number; children: ReactNode }) {
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -75,7 +73,7 @@ type FooterIconId =
   | "pdfCompress"
   | "merge"
   | "ocr"
-  | "aiImage";
+  | "qr";
 
 const FOOTER_TOOL_LINKS: readonly { label: string; to: string; icon: FooterIconId }[] = [
   { label: "Resume Studio", to: "/resume", icon: "resume" },
@@ -86,7 +84,7 @@ const FOOTER_TOOL_LINKS: readonly { label: string; to: string; icon: FooterIconI
   { label: "PDF Compressor", to: "/pdf-compressor", icon: "pdfCompress" },
   { label: "Merge PDF", to: "/pdf-merge", icon: "merge" },
   { label: "OCR Extractor", to: "/ocr", icon: "ocr" },
-  { label: "AI Image Generator", to: "/ai-image-generator", icon: "aiImage" }
+  { label: "QR Code Generator", to: "/qr-code", icon: "qr" }
 ];
 
 function FooterToolGlyph({ id, className = "h-5 w-5" }: { id: FooterIconId; className?: string }) {
@@ -141,10 +139,10 @@ function FooterToolGlyph({ id, className = "h-5 w-5" }: { id: FooterIconId; clas
           <path d="M3.75 4.5v15m0-15h4.5m-4.5 0L9 9m-5.25-4.5L9 9m-5.25 4.5L9 15m-5.25-4.5h4.5m9-6v15m0-15h4.5m-4.5 0L15 9m5.25-4.5L15 9m5.25 4.5L15 15m5.25-4.5h-4.5" />
         </svg>
       );
-    case "aiImage":
+    case "qr":
       return (
         <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden {...stroke}>
-          <path d="M12 3l2.25 4.5L19.5 9l-3.75 3.75L16.5 18 12 15.75 7.5 18l.75-5.25L4.5 9l5.25-1.5L12 3z" />
+          <path d="M3.75 4.5h4.5v4.5h-4.5V4.5zM15.75 4.5h4.5v4.5h-4.5V4.5zM3.75 15h4.5v4.5h-4.5V15zM16.5 15h1.5v1.5H16.5V15zM19.5 15h1.5v1.5H19.5V15zM16.5 19.5h1.5V18H16.5v1.5zM19.5 18h1.5v1.5H19.5V18zM12 12h1.5v1.5H12V12zM9 12h1.5v1.5H9V12zM12 9h1.5v1.5H12V9z" />
         </svg>
       );
     default:
@@ -160,11 +158,6 @@ export function HomePage() {
         { title: "PDF Tools", desc: "Convert, compress and merge PDFs from one dashboard.", to: "/pdf-tools" },
         { title: "OCR Extractor", desc: "Extract text from images and PDFs.", to: "/ocr" },
         {
-          title: "AI Image Generator",
-          desc: "Type Hinglish prompt and generate AI art using free AI Horde.",
-          to: "/ai-image-generator"
-        },
-        {
           title: "QR Generator",
           desc: "Create customizable QR codes from links with instant preview.",
           to: "/qr-code"
@@ -178,51 +171,7 @@ export function HomePage() {
     []
   );
 
-  const reviews = useMemo(
-    () =>
-      [
-        {
-          logo: "CV",
-          company: "Lumen Careers",
-          quote:
-            "We point candidates to File Mitra’s resume studio — polished layout, easy edits, and PDF export without another subscription tool."
-        },
-        {
-          logo: "HR",
-          company: "Harbor HR",
-          quote:
-            "Finally a free resume builder where the preview matches the PDF. Our campus cohorts use it before mock interviews — fewer formatting disasters."
-        },
-        {
-          logo: "RS",
-          company: "RiseStack Talent",
-          quote:
-            "We recommend File Mitra for quick CV refreshes: bullet-friendly sections, ATS-style flow, and a clear print path for candidates in a hurry."
-        },
-        {
-          logo: "NX",
-          company: "Nexa Studio",
-          quote: "Super clean UI and really fast conversion. Team uses this daily."
-        },
-        {
-          logo: "QF",
-          company: "QuickFlow Stores",
-          quote:
-            "QR Generator is exactly what we needed for payment and menu links — instant preview, clean badge styling, and fast PNG download."
-        }
-      ] as const,
-    []
-  );
-
-  const [activeReview, setActiveReview] = useState(0);
   const [activeTool, setActiveTool] = useState(0);
-
-  useEffect(() => {
-    const id = window.setInterval(() => {
-      setActiveReview((prev) => (prev + 1) % reviews.length);
-    }, 4500);
-    return () => window.clearInterval(id);
-  }, [reviews.length]);
 
   useEffect(() => {
     const id = window.setInterval(() => {
@@ -243,8 +192,9 @@ export function HomePage() {
               Premium converter suite for daily work
             </h1>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-300 md:text-base">
-              Transform, compress, merge and OCR files in a clean modern experience. Fast performance,
-              elegant UI, and practical tools that keep expanding as your workflow grows.
+              Transform, compress, merge, and OCR files in a focused interface. File Mitra is built for people
+              who need dependable exports without installing desktop suites—students finishing assignments,
+              freelancers sending client-ready PDFs, and teams standardizing scans before they hit the inbox.
             </p>
             <div className="mt-3 flex flex-col gap-2 min-[400px]:flex-row min-[400px]:flex-wrap min-[400px]:items-center">
               <Link to="/pdf-tools" className="btn-primary w-full justify-center min-[400px]:w-auto">
@@ -259,8 +209,11 @@ export function HomePage() {
               <Link to="/qr-code" className="btn-secondary w-full justify-center min-[400px]:w-auto">
                 QR Generator
               </Link>
-              <Link to="/ai-image-generator" className="btn-secondary w-full justify-center min-[400px]:w-auto">
-                AI Image Generator
+              <Link to="/blog" className="btn-secondary w-full justify-center min-[400px]:w-auto">
+                Guides &amp; blog
+              </Link>
+              <Link to="/how-it-works" className="btn-secondary w-full justify-center min-[400px]:w-auto">
+                How it works
               </Link>
             </div>
           </div>
@@ -320,6 +273,7 @@ export function HomePage() {
           <div className="surface-muted relative overflow-hidden rounded-2xl p-5">
             <div className="pointer-events-none absolute -right-6 -top-10 h-32 w-32 rounded-full bg-indigo-500/20 blur-2xl" />
             <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Preview snapshot</div>
+            <p className="mt-1 text-[10px] text-slate-500">Fictional example for layout demonstration only.</p>
             <div className="mt-3 space-y-2 rounded-lg border border-white/10 bg-white p-4 text-[11px] leading-snug text-slate-800 shadow-lg">
               <div className="text-[13px] font-bold text-slate-900">Aanya Sharma</div>
               <div className="text-[10px] text-slate-600">Product Designer · Design Systems</div>
@@ -335,59 +289,111 @@ export function HomePage() {
         </div>
       </Section>
 
+      <Section
+        title="Why this site exists"
+        description="File utilities are easy to find online—harder to find ones that explain trade-offs, respect privacy, and stay readable. This section is for visitors (and reviewers) who want context, not just buttons."
+      >
+        <div className="space-y-4 text-sm leading-relaxed text-slate-300 sm:text-base">
+          <p>
+            Every tool here is meant to solve a narrow job well: pick a format, tune quality, download the
+            result. Where it matters, the{" "}
+            <Link to="/blog" className="font-medium text-white underline-offset-2 hover:underline">
+              blog
+            </Link>{" "}
+            walks through real-world choices—when WebP beats JPEG, how PDF table extraction can drift from the
+            original layout, and how to prep scans so OCR fails less often.
+          </p>
+          <p>
+            We do not ask you to create an account for these flows. Files are processed to complete the task
+            you started; treat anything sensitive according to your own policies, and read the{" "}
+            <Link to="/privacy-policy" className="font-medium text-white underline-offset-2 hover:underline">
+              privacy policy
+            </Link>{" "}
+            for how we approach data handling and retention at a high level.
+          </p>
+          <p>
+            Useful sites should still read well without running a tool first. That is why the homepage, about
+            page, and articles are written as standalone references—not filler around a single upload box.
+          </p>
+        </div>
+      </Section>
+
       <div className="grid gap-4 md:grid-cols-3">
-        <Card title="Trusted" description="Used by millions of users worldwide.">
-          <div className="mt-1 text-3xl font-semibold tracking-tight text-white tabular-nums">
-            {STATS_FMT.format(12800)}+
-          </div>
-          <div className="mt-1 text-xs text-slate-400">Users</div>
+        <Card
+          title="Practical scope"
+          description="Converters, compression, merge, OCR, QR, and an in-browser resume studio—each with clear inputs and downloads."
+        >
+          <p className="mt-2 text-sm text-slate-400">
+            Pick a workflow from the nav or tool grid; you always land on an explanation before the controls.
+          </p>
         </Card>
-        <Card title="Activity" description="Conversions completed so far.">
-          <div className="mt-1 text-3xl font-semibold tracking-tight text-white tabular-nums">
-            {STATS_FMT.format(540000)}+
-          </div>
-          <div className="mt-1 text-xs text-slate-400">Images converted</div>
+        <Card
+          title="Editorial depth"
+          description="Long-form guides on formats, PDF behavior, OCR limits, and resume structure—not keyword stubs."
+        >
+          <p className="mt-2 text-sm text-slate-400">
+            Start on the{" "}
+            <Link to="/blog" className="text-indigo-200 hover:text-white">
+              blog index
+            </Link>{" "}
+            for the newest articles.
+          </p>
         </Card>
-        <Card title="PDFs" description="PDFs created with this tool.">
-          <div className="mt-1 text-3xl font-semibold tracking-tight text-white tabular-nums">
-            {STATS_FMT.format(9300)}+
-          </div>
-          <div className="mt-1 text-xs text-slate-400">PDFs generated</div>
+        <Card
+          title="Privacy-minded design"
+          description="No login wall for the tools shown here; processing is tied to the task you run, not a personal media library."
+        >
+          <p className="mt-2 text-sm text-slate-400">
+            Questions? Use{" "}
+            <Link to="/contact" className="text-indigo-200 hover:text-white">
+              contact
+            </Link>
+            —we read thoughtful feedback.
+          </p>
         </Card>
       </div>
 
-      <Section title="User Reviews" description="What teams say about this tool.">
-        <div className="relative min-w-0 max-w-full overflow-hidden">
-          <PixelCarousel active={activeReview} itemCount={reviews.length}>
-            {reviews.map((item) => (
-              <div key={item.company} className="surface-muted min-w-0 p-5 pr-1 sm:pr-5">
-                <div className="flex items-center gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/10 text-sm font-semibold text-white">
-                    {item.logo}
-                  </div>
-                  <div className="text-sm font-medium text-white">{item.company}</div>
-                </div>
-                <p className="mt-4 text-sm leading-6 text-slate-300">{item.quote}</p>
-              </div>
-            ))}
-          </PixelCarousel>
+      <Section
+        title="Common use cases"
+        description="Illustrative scenarios— not paid endorsements or guaranteed outcomes for any third party."
+      >
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="surface-muted rounded-2xl p-5">
+            <h3 className="text-sm font-semibold text-white">Students &amp; coursework</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Turn camera scans into smaller PDFs, extract text for quotes, or convert screenshots to a required
+              format before uploading to a portal.
+            </p>
+          </div>
+          <div className="surface-muted rounded-2xl p-5">
+            <h3 className="text-sm font-semibold text-white">Freelancers &amp; job seekers</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Refresh a CV in the resume studio, export a print-friendly PDF, and compress portfolio images before
+              sending a single attachment.
+            </p>
+          </div>
+          <div className="surface-muted rounded-2xl p-5">
+            <h3 className="text-sm font-semibold text-white">Small business &amp; shops</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Merge invoices into one file for accounting, generate a QR code for a menu or payment link, and shrink
+              PDFs that bounce back from email size limits.
+            </p>
+          </div>
+          <div className="surface-muted rounded-2xl p-5">
+            <h3 className="text-sm font-semibold text-white">Office paperwork</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              OCR a signed scan, try table extraction when a statement is digitally authored, and keep originals until
+              you verify the export.
+            </p>
+          </div>
         </div>
-
-        <div className="mt-4 flex items-center justify-center gap-2">
-          {reviews.map((item, idx) => (
-            <button
-              key={item.company}
-              type="button"
-              onClick={() => setActiveReview(idx)}
-              className={
-                idx === activeReview
-                  ? "h-2.5 w-2.5 scale-125 rounded-full bg-white shadow-[0_0_0_2px_rgba(255,255,255,0.35)]"
-                  : "h-2.5 w-2.5 rounded-full bg-white/30"
-              }
-              aria-label={`Go to review ${idx + 1}`}
-            />
-          ))}
-        </div>
+        <p className="mt-4 text-xs text-slate-500">
+          Need the full walkthrough? Read the{" "}
+          <Link to="/how-it-works" className="text-slate-400 underline-offset-2 hover:text-white">
+            usage guide
+          </Link>
+          .
+        </p>
       </Section>
 
       <section className="relative overflow-hidden rounded-[1.75rem] border border-white/[0.11] bg-gradient-to-br from-slate-950/95 via-slate-900/85 to-indigo-950/55 p-5 shadow-[0_28px_90px_-28px_rgba(15,23,42,0.9)] ring-1 ring-inset ring-white/[0.05] backdrop-blur-xl sm:p-7 lg:p-8">

@@ -1,4 +1,16 @@
 {
+  "redirects": [
+    {
+      "source": "/ai-image-generator",
+      "destination": "/image-tools",
+      "permanent": true
+    },
+    {
+      "source": "/blog/free-ai-image-generator-hinglish-prompt-guide",
+      "destination": "/blog",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/:path*",

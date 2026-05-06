@@ -1,6 +1,4 @@
 export type ImageFormat = "jpeg" | "png" | "webp" | "bmp";
-const IMAGE_GEN_TIMEOUT_MS = 240_000;
-
 /** Production / remote API. Empty = same origin (local Vite `/api` → proxy). */
 function apiUrl(path: string): string {
   const raw = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() ?? "";
@@ -217,53 +215,5 @@ export async function submitContact(params: {
     throw new Error(detail || `Contact failed (${res.status})`);
   }
   return (await res.json()) as { ok: boolean };
-}
-
-type GenerateImageResponse = {
-  message: string;
-  image_url: string;
-};
-
-function resolveImagePath(path: string): string {
-  if (/^https?:\/\//i.test(path)) return path;
-  const p = path.startsWith("/") ? path : `/${path}`;
-  return apiUrl(p);
-}
-
-export async function generateImageFromPrompt(params: {
-  prompt: string;
-}): Promise<{ message: string; imageUrl: string }> {
-  const controller = new AbortController();
-  const timeoutId = window.setTimeout(() => controller.abort(), IMAGE_GEN_TIMEOUT_MS);
-
-  let res: Response;
-  try {
-    res = await fetch(apiUrl("/api/generate-image"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: params.prompt }),
-      signal: controller.signal
-    });
-  } catch (e: unknown) {
-    if (e instanceof Error && e.name === "AbortError") {
-      throw new Error(
-        `Image generation timed out after ${IMAGE_GEN_TIMEOUT_MS / 1000}s. Please retry.`
-      );
-    }
-    throw e;
-  } finally {
-    window.clearTimeout(timeoutId);
-  }
-
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(text || `Image generation failed (${res.status})`);
-  }
-
-  const data = (await res.json()) as GenerateImageResponse;
-  return {
-    message: data.message,
-    imageUrl: resolveImagePath(data.image_url)
-  };
 }
 

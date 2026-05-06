@@ -49,11 +49,23 @@ export function BlogIndexPage() {
             and anyone who wants fewer surprises in exported files. Share feedback from the contact page if you want a
             topic covered next.
           </p>
-          <div className="mt-4 rounded-2xl border border-indigo-300/20 bg-indigo-500/10 p-4">
-            <p className="text-sm text-indigo-100">
-              New: Hinglish prompt se free AI image banani hai? Try our{" "}
-              <Link to="/ai-image-generator" className="font-semibold text-white underline-offset-2 hover:underline">
-                AI Image Generator
+          <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <p className="text-sm leading-relaxed text-slate-300">
+              Prefer reading before uploading? Start with{" "}
+              <Link
+                to="/blog/$slug"
+                params={{ slug: "jpeg-vs-png-vs-webp-choosing-image-format" }}
+                className="font-semibold text-white underline-offset-2 hover:underline"
+              >
+                JPEG vs PNG vs WebP
+              </Link>{" "}
+              or{" "}
+              <Link
+                to="/blog/$slug"
+                params={{ slug: "reduce-pdf-size-without-ruining-readability" }}
+                className="font-semibold text-white underline-offset-2 hover:underline"
+              >
+                PDF compression without ruining readability
               </Link>
               .
             </p>

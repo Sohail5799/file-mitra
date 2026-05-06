@@ -9,7 +9,7 @@ export function PrivacyPolicyPage() {
       titleLevel={1}
     >
       <article className="max-w-3xl space-y-8 text-sm leading-relaxed text-slate-300">
-        <p className="text-xs text-slate-500">Last updated: 18 April 2026</p>
+        <p className="text-xs text-slate-500">Last updated: 6 May 2026</p>
 
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight text-white">The short version</h2>
@@ -69,9 +69,60 @@ export function PrivacyPolicyPage() {
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight text-white">Cookies and local storage</h2>
           <p>
-            The app may store small bits of data in your browser so pages load faster or remember harmless preferences.
-            There is no creepy ad network hidden behind that — it is mostly “make the UI work.” You can clear site data
-            in your browser any time; some features might just forget what you had open.
+            The app may store small amounts of data in your browser (including local storage) so pages load correctly
+            or remember harmless UI preferences. You can clear site data in your browser settings at any time; some
+            features may reset until you use them again.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-base font-semibold tracking-tight text-white">Advertising and Google AdSense</h2>
+          <p>
+            File Mitra may display advertisements served by Google AdSense and other Google advertising partners.
+            Third-party vendors, including Google, use cookies or similar technologies to serve ads based on your visits
+            to this site and/or other sites on the Internet. These technologies help measure ad performance, cap how
+            often you see an ad, and (where allowed) personalize content and ads.
+          </p>
+          <p>
+            You can learn how Google uses data when you use our site or partners’ sites in Google’s policy at{" "}
+            <a
+              href="https://policies.google.com/technologies/ads"
+              className="text-cyan-200 underline decoration-white/20 underline-offset-2 hover:text-white"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              policies.google.com/technologies/ads
+            </a>
+            . For more about cookies, see{" "}
+            <a
+              href="https://policies.google.com/technologies/cookies"
+              className="text-cyan-200 underline decoration-white/20 underline-offset-2 hover:text-white"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Google’s Cookies Policy
+            </a>
+            . You can manage or opt out of personalized advertising from Google where available via{" "}
+            <a
+              href="https://adssettings.google.com"
+              className="text-cyan-200 underline decoration-white/20 underline-offset-2 hover:text-white"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              adssettings.google.com
+            </a>
+            .
+          </p>
+          <p>
+            Depending on your region, advertising partners may rely on a lawful basis (such as consent) to use
+            non-essential cookies or to show personalized ads. Where required, we or our partners present choices
+            (for example through a consent mechanism). If you decline optional cookies or personalization, you may
+            still see non-personalized or contextual ads.
+          </p>
+          <p>
+            Advertisements are provided by third parties. File Mitra does not control which specific ads appear and is
+            not responsible for the content of third-party ads; if an ad looks misleading or inappropriate, you can
+            use your platform’s ad feedback options and let us know via the contact page.
           </p>
         </section>
 

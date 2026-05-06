@@ -76,10 +76,10 @@ const ROUTES: Record<string, RouteSeo> = {
     keywords: "QR code generator online, free QR from URL, custom QR code, QR PNG download"
   },
   "/about": {
-    title: `About ${SITE_NAME} — mission & tools`,
+    title: `About ${SITE_NAME} — mission, tools & editorial guides`,
     description:
-      "Learn what File Mitra offers: fast file utilities, privacy-minded processing, and a growing set of image and PDF workflows.",
-    keywords: "about File Mitra, file utility suite, free online converters"
+      "What File Mitra does: image and PDF utilities, OCR, QR codes, and a resume studio—plus long-form blog guides on formats, compression, and extraction limits.",
+    keywords: "about File Mitra, file utility suite, PDF tools explained, image format guide"
   },
   "/contact": {
     title: `Contact ${SITE_NAME}`,
@@ -87,11 +87,17 @@ const ROUTES: Record<string, RouteSeo> = {
       "Reach out with feedback, feature ideas, or support questions — we read every message.",
     keywords: "contact File Mitra, file converter support, feedback"
   },
+  "/how-it-works": {
+    title: `How it works — usage guide | ${SITE_NAME}`,
+    description:
+      "Step-by-step overview of File Mitra: choosing tools, uploading files, tuning quality, downloads, privacy expectations, and troubleshooting before you contact support.",
+    keywords: "File Mitra guide, how to use file converter, PDF tools tutorial, online OCR help"
+  },
   "/privacy-policy": {
     title: `Privacy policy | ${SITE_NAME}`,
     description:
-      "How File Mitra handles your files and data: processing for conversions, no unnecessary retention, and practical privacy practices.",
-    keywords: "File Mitra privacy, data policy, file processing privacy"
+      "How File Mitra handles your files and data, including cookies, optional Google AdSense ads, and third-party advertising technologies — plus retention practices for conversions and contact messages.",
+    keywords: "File Mitra privacy, AdSense cookies, data policy, file processing privacy"
   },
   "/terms": {
     title: `Terms and conditions | ${SITE_NAME}`,
@@ -105,13 +111,6 @@ const ROUTES: Record<string, RouteSeo> = {
       "Practical articles on JPEG vs PNG vs WebP, PDF compression, table extraction to Excel, OCR for scans, merging PDFs, and FAQs about using File Mitra safely.",
     keywords:
       "File Mitra blog, PDF tips, image compression guide, OCR guide, merge PDF tutorial, PDF to Excel help, file converter FAQ"
-  },
-  "/ai-image-generator": {
-    title: `Free AI image generator from Hinglish prompts | ${SITE_NAME}`,
-    description:
-      "Type a Hinglish or English prompt and generate AI images for free using AI Horde. No paid API and no local model setup needed.",
-    keywords:
-      "free AI image generator, hinglish prompt to image, AI Horde image API, text to image online free, prompt to art tool"
   },
   "/resume": {
     title: `Free resume builder — ATS-friendly CV & print PDF | ${SITE_NAME}`,
@@ -191,7 +190,14 @@ export function applyRouteSeo(pathname: string): void {
   upsertMeta("property", "og:url", canonical);
   upsertMeta("property", "og:locale", "en_IN");
 
+  const ogImage = `${SITE_ORIGIN}/og-image.png`;
+  upsertMeta("property", "og:image", ogImage);
+  upsertMeta("property", "og:image:width", "1200");
+  upsertMeta("property", "og:image:height", "630");
+  upsertMeta("property", "og:image:alt", seo.title);
+
   upsertMeta("name", "twitter:card", "summary_large_image");
   upsertMeta("name", "twitter:title", seo.title);
   upsertMeta("name", "twitter:description", seo.description);
+  upsertMeta("name", "twitter:image", ogImage);
 }

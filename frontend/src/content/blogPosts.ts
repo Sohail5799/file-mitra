@@ -17,55 +17,6 @@ export type BlogPost = {
 
 const posts: BlogPost[] = [
   {
-    slug: "free-ai-image-generator-hinglish-prompt-guide",
-    title: "Free AI image generator: Hinglish prompt se better results ka practical guide",
-    excerpt:
-      "Hinglish prompt likhkar AI image kaise generate karein, prompt improve kaise karein, aur queue delay handle kaise karein — simple breakdown.",
-    date: "2026-04-23",
-    readMin: 8,
-    keywords:
-      "free AI image generator, Hinglish prompt to image, AI Horde guide, text to image prompt tips, prompt engineering beginners",
-    sections: [
-      {
-        type: "p",
-        text: "Agar aap direct Hinglish mein prompt likhte ho, AI image tools kabhi-kabhi vague output dete hain. Best approach hai: idea Hinglish mein socho, phir usko clear English scene description mein convert karo. Isse model ko subject, mood, lighting aur style better samajh aata hai."
-      },
-      {
-        type: "h2",
-        text: "Prompt structure jo consistently kaam karta hai"
-      },
-      {
-        type: "ul",
-        items: [
-          "Subject: kya banana hai (futuristic city, portrait, product shot).",
-          "Environment: time, weather, location (rainy night, neon streets).",
-          "Style: cinematic, anime, realistic, concept art.",
-          "Quality hints: detailed textures, dramatic lighting, 4k look."
-        ]
-      },
-      {
-        type: "h2",
-        text: "Hinglish input ka example"
-      },
-      {
-        type: "p",
-        text: "Input: 'ek futuristic city bana de neon lights ke sath'. Better expanded prompt: 'A futuristic cyberpunk city at night with neon lights, wet streets, cinematic reflections, highly detailed architecture, dramatic atmosphere.'"
-      },
-      {
-        type: "h2",
-        text: "Free AI Horde queue ko samajhna"
-      },
-      {
-        type: "p",
-        text: "AI Horde community workers par chalta hai, isliye queue time fluctuate karta hai. Busy period mein thoda wait normal hai. Same prompt ke 1-2 retries se output mil jaata hai, especially off-peak hours mein."
-      },
-      {
-        type: "callout",
-        text: "Action tip: pehle short test prompt chalao, phir successful style ko refine karke final high-detail prompt generate karo."
-      }
-    ]
-  },
-  {
     slug: "create-custom-qr-codes-for-links-with-badges",
     title: "Create custom QR codes for links (with badges) in minutes",
     excerpt:

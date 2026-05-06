@@ -10,4 +10,3 @@ pypdf
 openpyxl
 python-docx
 pytesseract
-httpx

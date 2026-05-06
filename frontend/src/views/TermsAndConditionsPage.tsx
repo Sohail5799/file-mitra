@@ -9,7 +9,7 @@ export function TermsAndConditionsPage() {
       titleLevel={1}
     >
       <article className="max-w-3xl space-y-8 text-sm leading-relaxed text-slate-300">
-        <p className="text-xs text-slate-500">Last updated: 18 April 2026</p>
+        <p className="text-xs text-slate-500">Last updated: 6 May 2026</p>
 
         <section className="space-y-3">
           <h2 className="text-base font-semibold tracking-tight text-white">Using the site</h2>
@@ -77,6 +77,23 @@ export function TermsAndConditionsPage() {
           <p>
             The site may rely on libraries, fonts, or infrastructure from other providers. Their terms can apply where
             relevant. If something outside our control breaks, we fix what we can on our side.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-base font-semibold tracking-tight text-white">Advertising</h2>
+          <p>
+            The site may show display advertisements (for example through Google AdSense). Those ads are served by
+            third parties; clicking an ad may take you to an external site governed by that advertiser’s terms and
+            privacy policy. File Mitra does not endorse every product or claim shown in third-party ads. For how
+            advertising data is handled on this site, see the{" "}
+            <Link
+              to="/privacy-policy"
+              className="text-cyan-200 underline decoration-white/20 underline-offset-2 hover:text-white"
+            >
+              privacy policy
+            </Link>
+            .
           </p>
         </section>
 

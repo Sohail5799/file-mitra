@@ -96,8 +96,9 @@ export function ContactPage() {
           <div className="mb-4 flex max-h-64 min-h-0 justify-center overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 sm:max-h-none sm:h-52">
             <img
               src={contactImage}
-              alt="Contact us"
+              alt=""
               className="h-auto w-full max-h-64 object-contain object-center sm:h-full sm:max-h-none sm:object-cover"
+              role="presentation"
             />
           </div>
           <div className="space-y-2 text-sm text-slate-300">

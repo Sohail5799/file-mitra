@@ -26,7 +26,7 @@ import { ImageToolsPage } from "./views/ImageToolsPage";
 import { PdfToolsPage } from "./views/PdfToolsPage";
 import { BlogIndexPage } from "./views/BlogIndexPage";
 import { BlogPostPage } from "./views/BlogPostPage";
-import { AiImageGeneratorPage } from "./views/AiImageGeneratorPage";
+import { HowItWorksPage } from "./views/HowItWorksPage";
 const QrCodePage = lazy(() => import("./views/QrCodePage").then((m) => ({ default: m.QrCodePage })));
 const ResumeBuilderPage = lazy(() =>
   import("./views/resume/ResumeBuilderPage").then((m) => ({ default: m.ResumeBuilderPage }))
@@ -216,6 +216,7 @@ function RootLayout() {
             >
               <NavLink to="/" label="Home" />
               <NavLink to="/blog" label="Blog" />
+              <NavLink to="/how-it-works" label="How it works" />
               <ResumeNavLink />
               <QrNavLink />
 
@@ -238,6 +239,13 @@ function RootLayout() {
                     </div>
                     <div className="grid min-w-0 gap-1">
                       <Link
+                        to="/how-it-works"
+                        onClick={() => setToolsOpen(false)}
+                        className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
+                      >
+                        How it works (usage guide)
+                      </Link>
+                      <Link
                         to="/image-tools"
                         onClick={() => setToolsOpen(false)}
                         className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
@@ -257,13 +265,6 @@ function RootLayout() {
                         className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
                       >
                         OCR Extractor
-                      </Link>
-                      <Link
-                        to="/ai-image-generator"
-                        onClick={() => setToolsOpen(false)}
-                        className="nav-mag-link nav-mag-link--dropdown flex w-full min-w-0 items-center break-words rounded-xl px-3 py-2.5 text-left text-xs leading-snug sm:rounded-full sm:px-3.5 sm:py-2.5 sm:text-sm"
-                      >
-                        AI Image Generator
                       </Link>
                       <Link
                         to="/qr-code"
@@ -303,6 +304,7 @@ function RootLayout() {
             <div className="app-shell premium-nav-wrap mt-2 flex max-h-[min(68vh,26rem)] flex-col gap-1 overflow-y-auto rounded-2xl p-2">
               <NavLink to="/" label="Home" onPick={closeAllNav} className={sheetLink} />
               <NavLink to="/blog" label="Blog" onPick={closeAllNav} className={sheetLink} />
+              <NavLink to="/how-it-works" label="How it works" onPick={closeAllNav} className={sheetLink} />
               <ResumeNavLink onPick={closeAllNav} className="!rounded-xl" />
               <QrNavLink onPick={closeAllNav} className="!rounded-xl" />
               <div className="px-2 pb-0.5 pt-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
@@ -321,7 +323,6 @@ function RootLayout() {
                 className={sheetLink}
               />
               <NavLink to="/ocr" label="OCR Extractor" onPick={closeAllNav} className={sheetLink} />
-              <NavLink to="/ai-image-generator" label="AI Image Generator" onPick={closeAllNav} className={sheetLink} />
               <div className="my-1 border-t border-white/10" />
               <NavLink to="/about" label="About" onPick={closeAllNav} className={sheetLink} />
               <NavLink to="/contact" label="Contact" onPick={closeAllNav} className={sheetLink} />
@@ -337,8 +338,20 @@ function RootLayout() {
 
         <footer className="mt-12 border-t border-white/10 pt-6">
           <div className="flex flex-col gap-3 text-xs text-slate-400 md:flex-row md:items-center md:justify-between">
-            <div>Fast, private, and simple.</div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-200 via-white to-cyan-100 text-[10px] font-bold text-slate-900">
+                  FM
+                </span>
+                <span>
+                  © {new Date().getFullYear()} File Mitra · Fast, private, and simple.
+                </span>
+              </div>
+            </div>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <Link to="/how-it-works" className="hover:text-white">
+                How it works
+              </Link>
               <Link to="/resume" className="hover:text-white">
                 Resume
               </Link>
@@ -429,6 +442,12 @@ const aboutRoute = new Route({
   component: AboutPage
 });
 
+const howItWorksRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/how-it-works",
+  component: HowItWorksPage
+});
+
 const contactRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/contact",
@@ -471,12 +490,6 @@ const blogPostRoute = new Route({
   component: BlogPostPage
 });
 
-const aiImageGeneratorRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: "/ai-image-generator",
-  component: AiImageGeneratorPage
-});
-
 const resumeRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/resume",
@@ -496,12 +509,12 @@ const routeTree = rootRoute.addChildren([
   ocrRoute,
   qrCodeRoute,
   aboutRoute,
+  howItWorksRoute,
   contactRoute,
   privacyPolicyRoute,
   termsRoute,
   blogIndexRoute,
   blogPostRoute,
-  aiImageGeneratorRoute,
   resumeRoute
 ]);
 
